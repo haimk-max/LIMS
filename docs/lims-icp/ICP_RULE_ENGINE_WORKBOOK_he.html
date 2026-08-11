@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<!--
+  חוברת עבודה — אפיון מנוע הכללים ICP-OES ← LIMS (v0.3)
+  נגזר מ: ICP_OES_lab_workflow_rule_engine_he.html v0.2 (יובא מ-ChatGPT, 2026-08-03) + אימות מול SOP-05.
+  עיצוב: הועתק מ-sessions-archive/toolkit/process/templates/hebrew-doc.html (התבנית הקנונית).
+  קטע הקטלוג (בין סמני CATALOG) מיוצר אוטומטית מ-ICP_LIMS_RULE_CATALOG_he.csv
+  באמצעות tools/build_catalog_section.py — אין לערוך אותו ידנית; מעדכנים את ה-CSV ומריצים את המחולל.
+-->
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>חוברת עבודה — מנוע הכללים ICP-OES ← LIMS (v0.3)</title>
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700;900&family=Source+Sans+3:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --paper:#fdfcf9; --ink:#1a1a1a; --ink-2:#3a3a3a; --soft:#6b6b6b;
+    --rule:#1a1a1a; --rule-light:#cfcfcf; --rule-faint:#e6e3dd;
+    --accent:#0f6b7a; --accent-soft:#e6f0f2; --grey-1:#f0ede6; --grey-2:#d8d3c8;
+    --sop:#0e6b3a; --sop-soft:#e4f2e9; --work:#0f4c7a; --work-soft:#e6eef6;
+    --open:#8a5400; --open-soft:#fdf1dc; --warn:#a33005; --warn-soft:#fbe9e2;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:"Frank Ruhl Libre","Times New Roman",serif;
+    -webkit-font-smoothing:antialiased;font-feature-settings:"kern","liga","tnum"}
+  body{padding:0 0 80px;font-size:15.5px;line-height:1.7}
+  bdi{unicode-bidi:isolate}
+  p,li,td,th,h1,h2,h3,h4,figcaption{unicode-bidi:isolate}
+  .doc{max-width:1000px;margin:0 auto;padding:56px 48px 0}
+  .mono{font-family:"IBM Plex Mono",monospace;font-feature-settings:"tnum"}
+
+  .masthead{border-bottom:2px solid var(--ink);padding-bottom:22px;margin-bottom:24px}
+  .masthead .top{display:flex;justify-content:space-between;align-items:baseline;
+    font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--soft);padding-bottom:14px;
+    border-bottom:1px solid var(--rule-light);margin-bottom:22px}
+  .masthead h1{font-weight:900;font-size:29px;line-height:1.25;margin:0 0 12px;letter-spacing:-.005em}
+  .masthead .sub{font-size:15.5px;color:var(--ink-2);line-height:1.65;margin:0;text-align:justify}
+
+  /* nav */
+  nav.toc{position:sticky;top:0;z-index:20;background:var(--paper);
+    border-bottom:1px solid var(--rule-light);margin:0 -48px 34px;padding:10px 48px;
+    display:flex;flex-wrap:wrap;gap:6px 14px;font-family:"Source Sans 3",sans-serif;font-size:13px}
+  nav.toc a{color:var(--accent);text-decoration:none;font-weight:600}
+  nav.toc a:hover{text-decoration:underline}
+  nav.toc .sep{color:var(--rule-light)}
+
+  section{margin:40px 0}
+  .sec-h{display:flex;align-items:baseline;gap:14px;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--ink)}
+  .sec-h .num{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.06em;color:var(--soft);text-transform:uppercase;flex-shrink:0}
+  .sec-h h2{font-weight:700;font-size:21px;letter-spacing:-.005em;margin:0;flex:1}
+  h3{font-family:"Source Sans 3",sans-serif;font-weight:700;font-size:15.5px;margin:24px 0 10px;color:var(--ink)}
+  h4{font-family:"Source Sans 3",sans-serif;font-weight:700;font-size:14px;margin:16px 0 8px;color:var(--ink)}
+  p{line-height:1.7;color:var(--ink-2);margin:0 0 13px;text-align:justify;text-justify:inter-word}
+  p strong,li strong{color:var(--ink);font-weight:700}
+  ul.clean{list-style:none;padding:0;margin:12px 0 18px;border-top:1px solid var(--rule-faint)}
+  ul.clean li{font-size:14.5px;line-height:1.6;color:var(--ink-2);padding:10px 22px 10px 0;border-bottom:1px solid var(--rule-faint);position:relative}
+  ul.clean li::before{content:"—";position:absolute;right:0;top:10px;color:var(--soft)}
+  ul.clean li strong{color:var(--ink)}
+  .note{border-right:3px solid var(--accent);padding:12px 18px;margin:16px 0;background:var(--accent-soft);font-size:14px;line-height:1.6;color:var(--ink-2)}
+  .note.warn{border-right-color:var(--warn);background:var(--warn-soft)}
+
+  /* chips */
+  .chip{display:inline-block;font-family:"Source Sans 3",sans-serif;font-weight:700;font-size:11px;
+    letter-spacing:.03em;padding:2px 9px 3px;border-radius:10px;white-space:nowrap;vertical-align:middle}
+  .chip.sop{background:var(--sop-soft);color:var(--sop);border:1px solid #bfe0cc}
+  .chip.work{background:var(--work-soft);color:var(--work);border:1px solid #c3d6e8}
+  .chip.open{background:var(--open-soft);color:var(--open);border:1px solid #ecd2a0}
+  .chip.gate{background:var(--warn-soft);color:var(--warn);border:1px solid #eec4b4}
+  .chip.comp{background:var(--grey-1);color:var(--ink-2);border:1px solid var(--grey-2)}
+  .chip.cand{background:#efe9f7;color:#5b3a8e;border:1px solid #d6c8ea}
+
+  /* process strip */
+  .steps{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:16px 0 6px}
+  .step{border:1px solid var(--rule-light);background:#fff;padding:10px 12px;min-height:86px}
+  .step .n{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--accent);font-weight:600}
+  .step .t{font-family:"Source Sans 3",sans-serif;font-weight:700;font-size:13px;margin:3px 0 4px;color:var(--ink)}
+  .step .d{font-size:12px;line-height:1.45;color:var(--soft)}
+  .formula{font-family:"IBM Plex Mono",monospace;font-size:13.5px;background:var(--grey-1);
+    border:1px solid var(--grey-2);padding:8px 14px;margin:10px 0;display:inline-block;direction:ltr;text-align:left}
+
+  /* decision cards */
+  .dcard{border:1px solid var(--rule-light);border-right:4px solid var(--warn);background:#fff;
+    padding:16px 18px 14px;margin:0 0 18px}
+  .dcard.comp{border-right-color:var(--grey-2)}
+  .dcard .dhead{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+  .dcard .did{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:13px;color:var(--warn)}
+  .dcard.comp .did{color:var(--soft)}
+  .dcard h4{margin:0;font-size:15px;flex:1}
+  .dcard p{font-size:14px;margin-bottom:9px}
+  .dcard .dep{font-family:"Source Sans 3",sans-serif;font-size:12.5px;color:var(--soft);margin:6px 0 10px}
+  .dcard .dep b{color:var(--ink-2)}
+  .dform{border-top:1px dashed var(--rule-light);padding-top:10px;margin-top:6px;
+    font-family:"Source Sans 3",sans-serif;font-size:13px;color:var(--ink-2)}
+  .dform .row{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:8px}
+  .dform .f{flex:1;min-width:180px}
+  .dform .f.wide{flex-basis:100%}
+  .dform label{font-weight:700;color:var(--ink);display:block;margin-bottom:2px;font-size:12px}
+  .dform .blank{border-bottom:1px dotted var(--soft);min-height:20px}
+  .dform .blank.tall{min-height:40px}
+
+  /* tables */
+  table.data-table{width:100%;border-collapse:collapse;font-size:13.5px;margin:12px 0 18px;background:var(--paper)}
+  table.data-table thead th{border-top:1.5px solid var(--ink);border-bottom:1px solid var(--ink);
+    font-family:"Source Sans 3",sans-serif;font-size:11.5px;letter-spacing:.04em;text-transform:uppercase;
+    color:var(--soft);font-weight:600;padding:8px 9px 7px;text-align:right;background:var(--grey-1)}
+  table.data-table tbody td{padding:9px;text-align:right;border-bottom:1px solid var(--rule-faint);
+    vertical-align:top;line-height:1.5;color:var(--ink-2)}
+  table.data-table tbody tr:nth-child(even) td{background:rgba(240,237,230,.4)}
+  table.data-table tbody tr:last-child td{border-bottom:1.5px solid var(--ink)}
+  td.rid,th.rid{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink);white-space:nowrap;font-weight:500}
+  td.own{color:var(--soft);font-family:"Source Sans 3",sans-serif;font-size:12px;white-space:nowrap}
+  a.dref{color:var(--accent);text-decoration:none;font-family:"Source Sans 3",sans-serif;font-size:12px;font-weight:700;white-space:nowrap}
+  a.dref:hover{text-decoration:underline}
+
+  /* catalog toolbar */
+  .toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:14px 0 6px;
+    font-family:"Source Sans 3",sans-serif;font-size:13px}
+  .toolbar .lbl{color:var(--soft);font-weight:600;font-size:12px}
+  .fbtn{border:1px solid var(--rule-light);background:#fff;color:var(--ink-2);
+    font-family:"Source Sans 3",sans-serif;font-weight:600;font-size:12.5px;
+    padding:4px 12px;border-radius:14px;cursor:pointer}
+  .fbtn:hover{border-color:var(--accent);color:var(--accent)}
+  .fbtn.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  #count{color:var(--soft);font-size:12px;margin-right:auto}
+  .famblock h3{margin-top:26px}
+  .famblock.hidden{display:none}
+  tr.hidden{display:none}
+
+  footer{max-width:1000px;margin:0 auto;padding:28px 48px 0;border-top:1px solid var(--rule-light);
+    font-size:11.5px;color:var(--soft);font-family:"Source Sans 3",sans-serif;line-height:1.6}
+  footer span{display:inline-block;margin-left:16px}
+  footer b{color:var(--ink);font-weight:600}
+
+  @media print{
+    @page{size:A4;margin:15mm 13mm}
+    body{font-size:13px;padding:0}
+    .doc{padding:0;max-width:none}
+    nav.toc,.toolbar{display:none}
+    .masthead{margin-bottom:22px;padding-bottom:12px}
+    .masthead h1{font-size:21px}
+    .sec-h{break-after:avoid-page;margin-bottom:10px;padding-bottom:5px}
+    .sec-h h2{font-size:15px}
+    h3{font-size:12.5px;margin:14px 0 6px;break-after:avoid-page}
+    h4{break-after:avoid-page}
+    p,li{font-size:12.5px;line-height:1.5;orphans:2;widows:2}
+    ul.clean li{break-inside:avoid}
+    .steps{grid-template-columns:repeat(5,1fr)}
+    .step{break-inside:avoid;min-height:0}
+    .dcard{break-inside:avoid;padding:10px 12px 9px;margin-bottom:10px}
+    .dcard p{font-size:12px;margin-bottom:6px}
+    .note{break-inside:avoid}
+    table.data-table{font-size:10.5px;margin:8px 0 12px}
+    table.data-table thead th{font-size:8.5px;padding:4px 5px 3px}
+    table.data-table tbody td{padding:4px 5px 3px;line-height:1.35}
+    table.data-table thead{display:table-header-group}
+    table.data-table tr{break-inside:avoid}
+    footer{border-top:none;padding-top:10px;break-before:avoid-page;font-size:10px}
+  }
+  @media (max-width:760px){
+    .doc{padding:24px 16px 0}
+    .steps{grid-template-columns:repeat(2,1fr)}
+    nav.toc{margin:0 -16px 24px;padding:8px 16px}
+  }
+</style>
+</head>
+<body>
+
+<div class="doc">
+
+<header class="masthead">
+  <div class="top">
+    <span>ICP-OES · RULE ENGINE · WORKBOOK</span>
+    <span>גרסה 0.3 · 2026-08-03 · טיוטת עבודה — אינה נוהל מבוקר</span>
+  </div>
+  <h1>חוברת עבודה לצוות המעבדה — אפיון מנוע הכללים: מדגימה נמדדת ב-<bdi>ICP-OES</bdi> עד תוצאה מאושרת</h1>
+  <p class="sub"><strong>מטרת החוברת:</strong> לרכז במקום אחד את כל מה שנדרש כדי <strong>לסגור את אפיון הכללים והתהליך</strong>: תריסר כרטיסי הכרעה עם טופסי החלטה (§3), קטלוג 51 הכללים עם מעמד כל כלל (§4), שבעה כללים מועמדים שעלו בבדיקה צולבת (§5), תשע נקודות התייחסות שדורשות טיפול — כולל ממצאי בחינת קובץ ייצוא אמיתי (§6), ותבניות נתוני האב שיש למלא (§7). מבוסס על מסמך העבודה v0.2, על <bdi>SOP-05</bdi> ועל אימות חוזר של כל כלל מול נוסח ה-SOP. במחלוקת — סדר הסמכות שבמסמך העוגן גובר: <bdi>SOP</bdi> מבוקר ← החלטה מתועדת ← החלטת עבודה ← נוהג ← דוגמה.</p>
+</header>
+
+<nav class="toc">
+  <a href="#s1">איך עובדים</a><span class="sep">·</span>
+  <a href="#s2">התהליך</a><span class="sep">·</span>
+  <a href="#s3">כרטיסי הכרעה</a><span class="sep">·</span>
+  <a href="#s4">קטלוג הכללים</a><span class="sep">·</span>
+  <a href="#s5">כללים מועמדים</a><span class="sep">·</span>
+  <a href="#s6">נקודות התייחסות</a><span class="sep">·</span>
+  <a href="#s7">נתוני אב</a>
+</nav>
+
+<section id="s1">
+  <div class="sec-h"><span class="num">§1</span><h2>איך עובדים עם החוברת</h2></div>
+  <p>לכל כלל בקטלוג יש <strong>מעמד</strong> אחד משלושה, וזה כל ההבדל בין מה שמותר לתכנת למה שאסור:</p>
+  <ul class="clean">
+    <li><span class="chip sop">מעוגן SOP</span>&nbsp; הכלל נסמך על סעיף מפורש ב-<bdi>SOP-05</bdi> (מס' הסעיף מופיע בעמודת המקור). 26 כללים. מותר לממש — אך ראו נקודות ההתייחסות §6 לסתירות פנימיות.</li>
+    <li><span class="chip work">החלטת עבודה</span>&nbsp; נמסר על-ידי הצוות אך טרם עוגן במסמך מבוקר. 13 כללים. לפני אכיפה — נדרש בעלים מקצועי ועיגון.</li>
+    <li><span class="chip open">הכרעה פתוחה</span>&nbsp; חסר נתון, קיימת סתירה, או שהמדיניות טרם נקבעה. 12 כללים — כולם כבויים עד הכרעה, וכל אחד מקושר לכרטיס ההכרעה שלו ב-§3.</li>
+  </ul>
+  <p><strong>מסלול הסגירה:</strong> דנים בכרטיס הכרעה ← ממלאים את טופס ההחלטה (מחליט, תאריך, עיגון) ← מעדכנים את קובץ הקטלוג (<bdi>CSV</bdi> — מקור-האמת המכני) ← מריצים את המחולל לרענון החוברת ← כלל שהוכרע משנה מעמד. כלל חדש שעולה בדיון נרשם קודם כמועמד — לא נאכף עד שאושר. עמודות <strong>בעלים / גרסה / מבחן-קבלה</strong> בקטלוג ריקות בכוונה: מילוין הוא חלק מהסגירה (כרטיס <a class="dref" href="#d12">D-12</a>).</p>
+  <div class="note">שני עקרונות-על שאינם פתוחים לדיון בלי החלטה מתועדת: <strong>קובץ המקור נשמר ללא שינוי</strong> (כל עיבוד הוא שכבה מעליו), ו<strong>אין דריסת חזרות</strong> — כל ניסיון מדידה נשמר, ותוצאה נבחרת אחת לכל צירוף דגימה × יסוד עם היסטוריית גרסאות. ההטמעה תתחיל במצב <bdi>Shadow</bdi>: המנוע מחשב ומסמן אך אינו חוסם, עד השוואה מתועדת להחלטות הידניות.</div>
+</section>
+
+<section id="s2">
+  <div class="sec-h"><span class="num">§2</span><h2>התהליך במבט אחד</h2></div>
+  <div class="steps">
+    <div class="step"><div class="n">1</div><div class="t">Method + Sequence</div><div class="d">הגדרות מינימליות במכשיר; סוגי רשומות, מיהול</div></div>
+    <div class="step"><div class="n">2</div><div class="t">ייצוא לתיקייה קבועה</div><div class="d">כל הקווים, המבטים, העקומים והמטא-דאטה</div></div>
+    <div class="step"><div class="n">3</div><div class="t">קליטה ושלמות</div><div class="d">שמירת מקור, <bdi>Hash</bdi>, מניעת כפילות, זיהוי הרצה</div></div>
+    <div class="step"><div class="n">4</div><div class="t">סיווג רשומות</div><div class="d"><bdi>CAL / ICV / CCV / Blank / Sample / Spike / Dup</bdi></div></div>
+    <div class="step"><div class="n">5</div><div class="t">בחירת עקום וקו</div><div class="d">לפי הריכוז הנמדד, הטווח והעדיפות המאושרת</div></div>
+    <div class="step"><div class="n">6</div><div class="t">GO / WARNING / NO-GO</div><div class="d">כיול, בקרות, <bdi>Blank</bdi>, <bdi>IS</bdi>, טווחים, הפרעות</div></div>
+    <div class="step"><div class="n">7</div><div class="t">מודולי QA</div><div class="d">מגמות סטנדרטים, <bdi>Spikes</bdi>, כפולות, תקופתיות</div></div>
+    <div class="step"><div class="n">8</div><div class="t">שולחן מפעיל</div><div class="d">חריגים; כל החזרות גלויות; המלצת מערכת</div></div>
+    <div class="step"><div class="n">9</div><div class="t">בחירת תוצאה</div><div class="d">מפעיל בוחר; סטייה מהמלצה מנומקת ונרשמת</div></div>
+    <div class="step"><div class="n">10</div><div class="t">אישור מנהל</div><div class="d">שחזור מלא עד קובץ המקור; אישור / החזרה / דחייה</div></div>
+  </div>
+  <p style="margin-top:14px"><strong>שני הריכוזים:</strong> נשמרים בנפרד "ריכוז" (בתמיסה הנמדדת), פקטור המיהול, ו"ריכוז סופי". המנוע מאמת:</p>
+  <div class="formula">Final&nbsp;concentration&nbsp;=&nbsp;Measured&nbsp;concentration&nbsp;×&nbsp;Dilution&nbsp;factor</div>
+  <p><strong>בחירת עקום וקו נעשית לפי הריכוז שלפני המיהול.</strong> דוגמת ההמחשה מ-v0.2 (אינה כלל מאושר): נתרן נמדד <bdi>72 mg/L</bdi> בתמיסה, מיהול ×5, סופי <bdi>360 mg/L</bdi>. הבדיקה מול <bdi>72</bdi>: שני קווי ה-<bdi>Axial</bdi>&rlm; (<bdi>1–5</bdi>) נפסלים; <bdi>589.592R</bdi>&rlm; (<bdi>5–500</bdi>) ו-<bdi>330.298R</bdi>&rlm; (<bdi>50–500</bdi>) שניהם כשרים — ובלי טבלת עדיפות מאושרת (כרטיס <a class="dref" href="#d05">D-05</a>) המערכת אינה רשאית לנחש, והתוצאה עוברת לטיפול מפעיל.</p>
+</section>
+
+<section id="s3">
+  <div class="sec-h"><span class="num">§3</span><h2>כרטיסי ההכרעה — 12 החלטות שסוגרות את האפיון</h2></div>
+  <p>שישה הראשונים הם <span class="chip gate">חסם־סף</span> — בלעדיהם אין מעבר לפיתוח; השאר <span class="chip comp">משלים</span>. כל כרטיס: הרקע והפער, הכללים התלויים (כבויים עד ההכרעה), וטופס החלטה למילוי בדיון. החלטה שהתקבלה — לתעד גם במקור המבוקר שעליו היא נשענת.</p>
+
+  <div class="dcard" id="d01">
+    <div class="dhead"><span class="did">D-01</span><h4>מיפוי הייצוא בפועל + מילון סוגי רשומות</h4><span class="chip gate">חסם־סף</span></div>
+    <p>כל המנוע נשען על הנחה שהייצוא מכיל את <strong>כל</strong> המועמדים (קו × מבט × עקום) ואת שדות החובה. נדרש: מיפוי עמודות מלא מול רשימת שדות החובה על קובץ אמיתי, ואישור מילון קודי סוגי-רשומה (הצעה ב-§7.4).</p>
+    <div class="note"><strong>עדכון 2026-08-03 — נבחן קובץ ייצוא אמיתי</strong> (<bdi>Mjr_Metals_20241201</bdi>, ‏55 מדידות, ‏11 גיליונות, מדידה <bdi>02/07</bdi> ← חישוב-מחדש <bdi>06/07/2026</bdi>):<br/>
+    <strong>✓ קיים בייצוא:</strong> כל 59 הקווים המועמדים לכל דגימה (כולל מבטי <bdi>R</bdi>); עמודות <bdi>Internal Standard</bdi>&rlm; (<bdi>Y 224.306/371.030/324.228</bdi>); טווח הכיול פר-קו (<bdi>MaxCalib/MinCalib</bdi>); <strong>תמונת עקום מלאה</strong> — מקדמים, קורלציה בפועל, <bdi>LOD/BEC</bdi>, נקודות כיול עם <bdi>Used/Not&nbsp;used</bdi>, משקלים ותאריך רגרסיה; תאריך חישוב-מחדש נפרד מתאריך המדידה (עדות חיה לעיבוד חוזר — <bdi>CAND-06</bdi>); מצב מכשיר פר דגימה; ערכים מצונזרים (<bdi>&lt;x</bdi>) — נדרש כלל פענוח.<br/>
+    <strong>✗ חסר או שבור:</strong> ‏<bdi>Operator</bdi> ריק בכל 55 השורות; אין <bdi>Run/Sequence ID</bdi> ואין מיקום ברצף; אין שדה סוג-רשומה (סיווג לפי שמות חופשיים — A8); <strong>פקטור מיהול = 1 תמיד, והמיהול האמיתי מוצפן בשם הדגימה</strong> ("<bdi>AC_459_1/10</bdi>") — A7; אין שדות <bdi>Spike</bdi> (דגימת-אם, כמות); רק שורות <bdi>Mean</bdi> — אין רמת אינטגרציות בודדות (<bdi>QC-007</bdi> לא ניתן לאימות מהקובץ); העמודות הסוגרות לא מיושרות לכותרות (עמודת "<bdi>Dilution</bdi>" מכילה ברובה שמות דגימה) — המיפוי חייב אימות תוכן, לא מיקום; ל-<bdi>Li</bdi> שתי עמודות באותו שם בדיוק (סיומת <bdi>R</bdi> אבדה) — זהות המבט נשברת בייצוא (<bdi>LIN-002</bdi>).</div>
+    <div class="dep"><b>כללים תלויים:</b> <bdi>ING-002</bdi>, <bdi>CLS-001</bdi> — ובעקיפין המנוע כולו. <b>קשור:</b> A1, A2, A7, A8, A9.</div>
+    <div class="dform"><div class="row">
+      <div class="f wide"><label>ההחלטה (רשימת שדות חובה סופית + פורמט + מילון קודים)</label><div class="blank tall"></div></div></div>
+      <div class="row"><div class="f"><label>מחליט/ים + תפקיד</label><div class="blank"></div></div>
+      <div class="f"><label>תאריך</label><div class="blank"></div></div>
+      <div class="f"><label>עיגון (מסמך מבוקר / רשומת החלטה)</label><div class="blank"></div></div></div>
+    </div>
+  </div>
+
+  <div class="dcard" id="d02">
+    <div class="dhead"><span class="did">D-02</span><h4>מבנה הבקרות בפועל ברצף ההרצה</h4><span class="chip gate">חסם־סף</span></div>
+    <p>שלושה נוסחים לא מתיישבים: <bdi>SOP §9.8</bdi> — ‏<bdi>CCV</bdi>+<bdi>CCB</bdi> כל 10 דגימות ובסוף, עם כלל עצירה קשיח בכשל; <bdi>§11.5</bdi> — גם <bdi>ICV</bdi> כל 10; נספח הרצף מדגים <bdi>ICV</bdi> בשני הבלוקים הראשונים אך לא בסוגר; ומהצוות נמסר "ארבע בקרות ו-<bdi>Blank</bdi>, מותר כשל יחיד לאלמנט" — סותר את כלל העצירה. כיוון יישוב אפשרי (הצעה בלבד): אם הכוונה למדיניות "חריגה שולית" — לעגן אותה ב-SOP עם גבולות מפורשים (לאילו בקרות, כמה כשלים, מה דין הדגימות); אחרת הכלל הקשיח גובר.</p>
+    <div class="dep"><b>כללים תלויים:</b> <bdi>QC-008</bdi>, <bdi>QC-009</bdi>. <b>קשור:</b> A5, ותבנית הרצף שתוגדר בנתוני האב.</div>
+    <div class="dform"><div class="row">
+      <div class="f wide"><label>ההחלטה (הרכב הבקרות, תדירות, דין כשל; האם נדרש עדכון SOP)</label><div class="blank tall"></div></div></div>
+      <div class="row"><div class="f"><label>מחליט/ים + תפקיד</label><div class="blank"></div></div>
+      <div class="f"><label>תאריך</label><div class="blank"></div></div>
+      <div class="f"><label>עיגון</label><div class="blank"></div></div></div>
+    </div>
+  </div>
+
+  <div class="dcard" id="d03">
+    <div class="dhead"><span class="did">D-03</span><h4>גבולות <bdi>Blank</bdi> לפי סוג</h4><span class="chip gate">חסם־סף</span></div>
+    <p>ה-SOP קובע בשני מקומות שני גבולות שונים: <bdi>§9.2</bdi> — בלנקים תקינים מתחת ל-<bdi>½ LLOQ</bdi>; ‏<bdi>§9.8</bdi> — ‏<bdi>CCB</bdi> "לא מעל <bdi>LLOQ</bdi>". נדרשת קביעה נפרדת ומחייבת לכל סוג — <bdi>ICB</bdi>, <bdi>CCB</bdi>, <bdi>Method Blank</bdi>, <bdi>Rinse Blank</bdi> — כולל טווח ההשפעה של כשל (אילו יסודות, אילו דגימות).</p>
+    <div class="dep"><b>כללים תלויים:</b> <bdi>QC-004</bdi>. <b>קשור:</b> A5.</div>
+    <div class="dform"><div class="row">
+      <div class="f wide"><label>ההחלטה (גבול לכל סוג + טווח השפעה)</label><div class="blank tall"></div></div></div>
+      <div class="row"><div class="f"><label>מחליט/ים + תפקיד</label><div class="blank"></div></div>
+      <div class="f"><label>תאריך</label><div class="blank"></div></div>
+      <div class="f"><label>עיגון</label><div class="blank"></div></div></div>
+    </div>
+  </div>
+
+  <div class="dcard" id="d04">
+    <div class="dhead"><span class="did">D-04</span><h4>טבלת בחירת עקומים + כלל הסרת נקודת כיול</h4><span class="chip gate">חסם־סף</span></div>
+    <p>לאותם יסודות קיימים עקומי <bdi>Low</bdi> ו-<bdi>High</bdi> (טבלה 2 ב-SOP), והמנוע בוחר עקום לפי הריכוז שלפני המיהול (<bdi>CAL-005</bdi>). נדרש: שמות העקומים בפועל, תחומי שימוש, טיפול בחפיפות וסדר עדיפות (<bdi>CAL-006</bdi>; תבנית §7.2). בנוסף, הכלל שנמסר — "ניתן להסיר נקודת כיול שאינה נקודת קצה" — אינו מופיע ב-SOP&rlm; (<bdi>CAL-007</bdi>): נדרש כלל מאושר — מי מוסמך, כמה נקודות חייבות להישאר (ה-SOP דורש ≥3 כולל <bdi>Blank</bdi>), ותיעוד מלא של ההסרה.</p>
+    <p><strong>עובדות מקובץ הדוגמה (2026-08-03):</strong> הסרת נקודות היא פרקטיקה שגרתית — לכל העקומים יש נקודות <bdi>Not&nbsp;used</bdi>, ובחלקם נותרו בדיוק במינימום (<bdi>Na 589.592</bdi>: ‏3 בשימוש מתוך 11); משקל ה-<bdi>Blank</bdi> בעקום גבוה פי 50; וסף הקורלציה המוגדר במתודה הוא <bdi>0.996</bdi> — מחמיר מדרישת ה-SOP&rlm; (<bdi>0.990</bdi>). המנוע צריך לקרוא את הספים מהמתודה עצמה, והכלל להסרה חייב לכסות את הפרקטיקה הקיימת.</p>
+    <div class="dep"><b>כללים תלויים:</b> <bdi>CAL-006</bdi>, <bdi>CAL-007</bdi>.</div>
+    <div class="dform"><div class="row">
+      <div class="f wide"><label>ההחלטה (טבלת עקומים מאושרת + כלל הסרת נקודה)</label><div class="blank tall"></div></div></div>
+      <div class="row"><div class="f"><label>מחליט/ים + תפקיד</label><div class="blank"></div></div>
+      <div class="f"><label>תאריך</label><div class="blank"></div></div>
+      <div class="f"><label>עיגון</label><div class="blank"></div></div></div>
+    </div>
+  </div>
+
+  <div class="dcard" id="d05">
+    <div class="dhead"><span class="did">D-05</span><h4>טבלת עדיפות קווים ומבטים + סף השוואה בין קווים</h4><span class="chip gate">חסם־סף</span></div>
+    <p>לרוב היסודות כמה קווים/מבטים כשרים באותו תחום (טבלה 1; ראו דוגמת הנתרן ב-§2). נדרש לכל שיטה × יסוד × תחום: קו ראשי, חלופות, <bdi>Axial/Radial</bdi>, סיבת מעבר מקודדת (<bdi>LIN-004</bdi>, <bdi>LIN-006</bdi>; תבנית §7.3) — וכן סף מוסכם לפער בין קווים תקינים שמעליו נדרשת בדיקת הפרעה (<bdi>LIN-005</bdi>).</p>
+    <div class="dep"><b>כללים תלויים:</b> <bdi>LIN-004</bdi>, <bdi>LIN-005</bdi>.</div>
+    <div class="dform"><div class="row">
+      <div class="f wide"><label>ההחלטה (טבלת עדיפות + סף השוואה)</label><div class="blank tall"></div></div></div>
+      <div class="row"><div class="f"><label>מחליט/ים + תפקיד</label><div class="blank"></div></div>
+      <div class="f"><label>תאריך</label><div class="blank"></div></div>
+      <div class="f"><label>עיגון</label><div class="blank"></div></div></div>
+    </div>
+  </div>
+
+  <div class="dcard" id="d06">
+    <div class="dhead"><span class="did">D-06</span><h4>סטטוסים, הרשאות ומדיניות <bdi>Override</bdi></h4><span class="chip gate">חסם־סף</span></div>
+    <p>המערכת ממליצה על ניסיון <bdi>PASS</bdi>; המפעיל רשאי לבחור אחרת לפי הרשאה ובנימוק (<bdi>REP-003</bdi>). נדרש: מה מותר לבחור ב-<bdi>WARNING</bdi>, מה דינו של <bdi>FAIL</bdi> (ברירת מחדל: לא ניתן לדיווח), מי מוסמך לעקוף, ואילו נימוקים קבילים. מסגרת מוצעת לדיון (מהמסלול הכללי — מגובה בפרקטיקה רגולטורית): שלוש מחלקות אכיפה — (1) חסימה ללא עקיפה (למשל כיול פסול: עצירה לפי <bdi>§9.8</bdi>, אין מסלול דיווח); (2) חסימה עם עקיפה מוגדרת-הרשאה + סיבה + סימון מסויג שמלווה את התוצאה עד הדוח; (3) אזהרה בלבד. ההכרעה: שיוך כל סוג כשל לאחת המחלקות.</p>
+    <div class="dep"><b>כללים תלויים:</b> <bdi>REP-003</bdi>; משליך על <bdi>APP-001</bdi>/<bdi>APP-002</bdi> (עיגון) ועל <bdi>CAND-04</bdi>.</div>
+    <div class="dform"><div class="row">
+      <div class="f wide"><label>ההחלטה (טבלת סוג-כשל ← מחלקה ← הרשאת עקיפה)</label><div class="blank tall"></div></div></div>
+      <div class="row"><div class="f"><label>מחליט/ים + תפקיד</label><div class="blank"></div></div>
+      <div class="f"><label>תאריך</label><div class="blank"></div></div>
+      <div class="f"><label>עיגון</label><div class="blank"></div></div></div>
+    </div>
+  </div>
+
+  <div class="dcard comp" id="d07">
+    <div class="dhead"><span class="did">D-07</span><h4>דיווח מתחת ל-<bdi>LLOQ</bdi> וערכים שליליים</h4><span class="chip comp">משלים</span></div>
+    <p>אין כלל דיווח מאושר (<bdi>CON-006</bdi>): איזה מסמן (<bdi>Qualifier</bdi>) נלווה, כמה ספרות, מה דין ערך שלילי, ואילו יחידות. ה-SOP קובע רק "עד שתי ספרות משמעותיות" (<bdi>§12.1</bdi>). עיקרון שכבר נקבע: אין להמציא אפס — הערך הגולמי נשמר גם כשמוצג טקסט בדוח.</p>
+    <div class="dep"><b>כללים תלויים:</b> <bdi>CON-006</bdi>; קשור <bdi>CAND-04</bdi> (התפשטות המסמן עד הדוח).</div>
+    <div class="dform"><div class="row"><div class="f wide"><label>ההחלטה</label><div class="blank tall"></div></div></div>
+      <div class="row"><div class="f"><label>מחליט/ים</label><div class="blank"></div></div><div class="f"><label>תאריך</label><div class="blank"></div></div><div class="f"><label>עיגון</label><div class="blank"></div></div></div>
+    </div>
+  </div>
+
+  <div class="dcard comp" id="d08">
+    <div class="dhead"><span class="did">D-08</span><h4>סבילות אימות החישוב ריכוז × מיהול</h4><span class="chip comp">משלים</span></div>
+    <p>המנוע מחשב מחדש <bdi>Measured × DF</bdi> ומשווה ל"ריכוז הסופי" שיצא מהמכשיר (<bdi>CON-002</bdi>). נדרשת סבילות מאושרת — בהתחשב בעיגול הפנימי של תוכנת המכשיר — שמעליה הרשומה נכשלת בקליטה.</p>
+    <div class="dep"><b>כללים תלויים:</b> <bdi>CON-002</bdi>.</div>
+    <div class="dform"><div class="row"><div class="f wide"><label>ההחלטה (סבילות + אופן חישובה)</label><div class="blank tall"></div></div></div>
+      <div class="row"><div class="f"><label>מחליט/ים</label><div class="blank"></div></div><div class="f"><label>תאריך</label><div class="blank"></div></div><div class="f"><label>עיגון</label><div class="blank"></div></div></div>
+    </div>
+  </div>
+
+  <div class="dcard comp" id="d09">
+    <div class="dhead"><span class="did">D-09</span><h4>טווח ההשפעה של <bdi>Memory Effect</bdi></h4><span class="chip comp">משלים</span></div>
+    <p>הכלל עצמו מעוגן (<bdi>INT-001</bdi>, ‏<bdi>§12.2</bdi>: אחרי דגימה מעל <bdi>500 mg/L</bdi> ‏<bdi>Na/Ca/Mg</bdi> או <bdi>200 mg/L</bdi> ‏<bdi>K</bdi> — מדידה חוזרת לדגימות הבאות), אך הפרמטר פתוח: <strong>כמה</strong> דגימות עוקבות מסומנות/נמדדות מחדש — מספר קבוע, או עד בלנק נקי?</p>
+    <div class="dep"><b>פרמטר של:</b> <bdi>INT-001</bdi>.</div>
+    <div class="dform"><div class="row"><div class="f wide"><label>ההחלטה</label><div class="blank tall"></div></div></div>
+      <div class="row"><div class="f"><label>מחליט/ים</label><div class="blank"></div></div><div class="f"><label>תאריך</label><div class="blank"></div></div><div class="f"><label>עיגון</label><div class="blank"></div></div></div>
+    </div>
+  </div>
+
+  <div class="dcard comp" id="d10">
+    <div class="dhead"><span class="did">D-10</span><h4>כללי מגמה במודולי <bdi>QA</bdi></h4><span class="chip comp">משלים</span></div>
+    <p>מודול המגמות (<bdi>QA-003</bdi> אוסף כל <bdi>ICV/CCV</bdi>/סטנדרט כסדרת זמן) מציף ראיה — אך אינו אוכף. נדרש: אילו התראות סטטיסטיות יוצגו, ומהי הנקודה שבה מגמה הופכת לפעולה מחייבת (ומה הפעולה).</p>
+    <div class="dep"><b>קשור:</b> <bdi>QA-003</bdi>; אין כלל אכיפה עד הכרעה.</div>
+    <div class="dform"><div class="row"><div class="f wide"><label>ההחלטה</label><div class="blank tall"></div></div></div>
+      <div class="row"><div class="f"><label>מחליט/ים</label><div class="blank"></div></div><div class="f"><label>תאריך</label><div class="blank"></div></div><div class="f"><label>עיגון</label><div class="blank"></div></div></div>
+    </div>
+  </div>
+
+  <div class="dcard comp" id="d11">
+    <div class="dhead"><span class="did">D-11</span><h4>היקף היסודות המוסמך והפעיל</h4><span class="chip comp">משלים</span></div>
+    <p>סעיף ה-<bdi>Scope</bdi> של ה-SOP מונה 11 יסודות; טבלה 1 מגדירה קווים ל-21; ההיקף המוסמך בפועל לא הוצהר בפרויקט. נדרש: רשימת היסודות הפעילה לנתוני האב — לפני טעינתם (נקודה A6; קשור <bdi>CAND-07</bdi> — אנומליית ה-<bdi>Ni</bdi>).</p>
+    <div class="dep"><b>קשור:</b> טעינת נתוני האב §7.1.</div>
+    <div class="dform"><div class="row"><div class="f wide"><label>ההחלטה (רשימת היסודות הפעילה)</label><div class="blank tall"></div></div></div>
+      <div class="row"><div class="f"><label>מחליט/ים</label><div class="blank"></div></div><div class="f"><label>תאריך</label><div class="blank"></div></div><div class="f"><label>עיגון</label><div class="blank"></div></div></div>
+    </div>
+  </div>
+
+  <div class="dcard comp" id="d12">
+    <div class="dhead"><span class="did">D-12</span><h4>בעלות, גרסאות ואישור של שיטה, כללים ונתוני אב</h4><span class="chip comp">משלים</span></div>
+    <p>מי בעל כל כלל (עמודת "בעלים" בקטלוג ריקה), מי מאשר <bdi>Method Version</bdi> ו-<bdi>Rule Set Version</bdi>, מי רשאי לשנות נתוני אב — והפרדת התפקידים בין מפעיל, בודק, מאשר ומנהל איכות.</p>
+    <div class="dep"><b>קשור:</b> כל הקטלוג; מטריצת התפקידים באפיון v0.1 §5 היא נקודת פתיחה.</div>
+    <div class="dform"><div class="row"><div class="f wide"><label>ההחלטה (מטריצת בעלות ואישור)</label><div class="blank tall"></div></div></div>
+      <div class="row"><div class="f"><label>מחליט/ים</label><div class="blank"></div></div><div class="f"><label>תאריך</label><div class="blank"></div></div><div class="f"><label>עיגון</label><div class="blank"></div></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="s4">
+  <div class="sec-h"><span class="num">§4</span><h2>קטלוג הכללים — 51 כללים בשבע משפחות</h2></div>
+  <p>הקטלוג מיוצר אוטומטית מקובץ ה-<bdi>CSV</bdi> (מקור-האמת). כלל במעמד <span class="chip open">הכרעה פתוחה</span> מקושר לכרטיס ההכרעה החוסם אותו. סינון (מסך בלבד; בהדפסה מוצג הכול):</p>
+  <div class="toolbar">
+    <span class="lbl">מעמד:</span>
+    <button class="fbtn on" data-status="all">הכול</button>
+    <button class="fbtn" data-status="SOP_CONFIRMED">מעוגן SOP</button>
+    <button class="fbtn" data-status="WORKING_DECISION">החלטת עבודה</button>
+    <button class="fbtn" data-status="OPEN_DECISION">הכרעה פתוחה</button>
+    <span id="count"></span>
+  </div>
+  <!-- CATALOG:BEGIN — נוצר אוטומטית מ-ICP_LIMS_RULE_CATALOG_he.csv; אין לערוך ידנית -->
+<div class="famblock"><h3>א. קליטה, שלמות וסיווג רשומות <span style="color:var(--soft);font-weight:400">(5 כללים)</span></h3>
+<table class="data-table"><thead><tr><th class="rid">מזהה</th><th style="width:30%">הכלל</th><th style="width:26%">פעולת המערכת</th><th>מעמד</th><th>מקור / הערה</th><th>בעלים</th><th>הכרעה</th></tr></thead><tbody>
+<tr data-status="WORKING_DECISION"><td class="rid">ING-001</td><td>קובץ מקור נשמר ללא שינוי ומקבל <bdi>Hash/Export ID</bdi>.</td><td>קליטה כפולה נדחית; עיבוד חוזר יוצר גרסה חדשה.</td><td><span class="chip work">החלטת עבודה</span></td><td>החלטת עבודה</td><td class="own">—</td><td></td></tr>
+<tr data-status="OPEN_DECISION"><td class="rid">ING-002</td><td>נדרשים <bdi>Run ID</bdi>, <bdi>Sample/Aliquot ID</bdi>, <bdi>Method Version</bdi>, <bdi>Element</bdi>, <bdi>Line</bdi>, <bdi>View</bdi>, <bdi>Curve</bdi>, ריכוז, מיהול, ריכוז סופי, יחידות, סוג רשומה וזמן.</td><td>שדה קריטי חסר → <bdi>HOLD</bdi> או דחיית הקובץ לפי חומרה.</td><td><span class="chip open">הכרעה פתוחה</span></td><td>לאשר רשימת חובה</td><td class="own">—</td><td><a class="dref" href="#d01">D-01 (חוסם)</a></td></tr>
+<tr data-status="WORKING_DECISION"><td class="rid">ING-003</td><td>יש לייצא את כל הקווים והעקומים המועמדים, לא רק את הנבחרים.</td><td>אם חסרים מועמדים — אין בחירה אוטומטית; מעבר לטיפול.</td><td><span class="chip work">החלטת עבודה</span></td><td>החלטת עבודה</td><td class="own">—</td><td></td></tr>
+<tr data-status="OPEN_DECISION"><td class="rid">CLS-001</td><td>סוג רשומה מזוהה לפי קוד מוסכם: <bdi>CAL/ICV/CCV/Blank/Sample/Spike/Duplicate</bdi> וכו&#x27;.</td><td>ניתוב למסלול התוצאה ולמודול <bdi>QA</bdi> המתאים.</td><td><span class="chip open">הכרעה פתוחה</span></td><td>נדרש מילון קודים</td><td class="own">—</td><td><a class="dref" href="#d01">D-01 (חוסם)</a></td></tr>
+<tr data-status="WORKING_DECISION"><td class="rid">CLS-002</td><td><bdi>Spike/Duplicate</bdi> מקושרים במפורש לדגימת המקור.</td><td>אין לבצע התאמה לפי שם בלבד; קישור חסר → <bdi>HOLD</bdi>.</td><td><span class="chip work">החלטת עבודה</span></td><td>החלטת עבודה</td><td class="own">—</td><td></td></tr>
+</tbody></table></div>
+<div class="famblock"><h3>ב. עקומי כיול ובחירת העקום המתאים לריכוז <span style="color:var(--soft);font-weight:400">(8 כללים)</span></h3>
+<table class="data-table"><thead><tr><th class="rid">מזהה</th><th style="width:30%">הכלל</th><th style="width:26%">פעולת המערכת</th><th>מעמד</th><th>מקור / הערה</th><th>בעלים</th><th>הכרעה</th></tr></thead><tbody>
+<tr data-status="SOP_CONFIRMED"><td class="rid">CAL-001</td><td>עקום כיול נמדד מדי יום עבודה אנליטי.</td><td>עקום מחוץ לתוקף הזמן אינו מועמד.</td><td><span class="chip sop">מעוגן SOP</span></td><td><bdi>SOP</bdi> §10.9</td><td class="own">—</td><td></td></tr>
+<tr data-status="SOP_CONFIRMED"><td class="rid">CAL-002</td><td>לפחות 3 סטנדרטים כולל <bdi>Blank</bdi>; כל עקום כולל <bdi>Blank</bdi>.</td><td>עקום שאינו עומד בתנאי → <bdi>FAIL</bdi>.</td><td><span class="chip sop">מעוגן SOP</span></td><td><bdi>SOP</bdi> §10.9 / <bdi>Table 1</bdi></td><td class="own">—</td><td></td></tr>
+<tr data-status="SOP_CONFIRMED"><td class="rid">CAL-003</td><td><bdi>R² &gt; 0.990</bdi> לעקום לינארי או מסדר שני.</td><td>ערך שאינו עומד בתנאי → <bdi>FAIL</bdi> לעקום.</td><td><span class="chip sop">מעוגן SOP</span></td><td><bdi>SOP</bdi> §10.9</td><td class="own">—</td><td></td></tr>
+<tr data-status="SOP_CONFIRMED"><td class="rid">CAL-004</td><td>הסטנדרט הנמוך יהיה ברמת <bdi>LLOQ</bdi> או מתחתיה.</td><td>עקום שאינו מכסה את קצה הכימות → <bdi>FAIL</bdi>/בדיקה.</td><td><span class="chip sop">מעוגן SOP</span></td><td><bdi>SOP</bdi> §10.9</td><td class="own">—</td><td></td></tr>
+<tr data-status="WORKING_DECISION"><td class="rid">CAL-005</td><td>בחירת עקום נעשית לפי הריכוז הנמדד לפני הכפלת פקטור המיהול.</td><td>נבחר רק עקום שטווחו מכיל את הריכוז בתמיסה.</td><td><span class="chip work">החלטת עבודה</span></td><td>לוגיקה נדרשת</td><td class="own">—</td><td></td></tr>
+<tr data-status="OPEN_DECISION"><td class="rid">CAL-006</td><td>כאשר קיימים כמה עקומים תקינים לאותו קו, מופעלת טבלת עדיפות לפי תחום ריכוז.</td><td>אין עדיפות או קיימת חפיפה לא פתורה → <bdi>WARNING</bdi>.</td><td><span class="chip open">הכרעה פתוחה</span></td><td>נדרשת טבלת <bdi>Curve Priority</bdi></td><td class="own">—</td><td><a class="dref" href="#d04">D-04 (חוסם)</a></td></tr>
+<tr data-status="OPEN_DECISION"><td class="rid">CAL-007</td><td>הסרת נקודת כיול מותרת רק לפי כלל מאושר; נמסר שניתן להסיר נקודה שאינה קצה.</td><td>נשמרים העקום המקורי והעקום שנבחר, הנקודה שהוסרה, משתמש, זמן וסיבה.</td><td><span class="chip open">הכרעה פתוחה</span></td><td>לא מופיע ב־<bdi>SOP</bdi> הנוכחי</td><td class="own">—</td><td><a class="dref" href="#d04">D-04 (חוסם)</a></td></tr>
+<tr data-status="WORKING_DECISION"><td class="rid">CAL-008</td><td>כל תוצאה מקושרת ל־<bdi>Calibration Snapshot</bdi>: מזהה, משוואה, טווח, <bdi>R²</bdi>, נקודות פעילות וסטטוס.</td><td>ה־<bdi>Snapshot</bdi> נשמר גם אם נתוני האב משתנים בעתיד.</td><td><span class="chip work">החלטת עבודה</span></td><td>עקיבות</td><td class="own">—</td><td></td></tr>
+</tbody></table></div>
+<div class="famblock"><h3>ג. בחירת קו ספקטרלי ו־Axial/Radial <span style="color:var(--soft);font-weight:400">(6 כללים)</span></h3>
+<table class="data-table"><thead><tr><th class="rid">מזהה</th><th style="width:30%">הכלל</th><th style="width:26%">פעולת המערכת</th><th>מעמד</th><th>מקור / הערה</th><th>בעלים</th><th>הכרעה</th></tr></thead><tbody>
+<tr data-status="SOP_CONFIRMED"><td class="rid">LIN-001</td><td>רק קו ומבט המותרים בגרסת השיטה יכולים להיבחר.</td><td>מועמד שאינו מאושר נפסל ונרשמת סיבה.</td><td><span class="chip sop">מעוגן SOP</span></td><td><bdi>SOP Table 1</bdi></td><td class="own">—</td><td></td></tr>
+<tr data-status="SOP_CONFIRMED"><td class="rid">LIN-002</td><td><bdi>Axial/Radial</bdi> הוא חלק בלתי נפרד מזהות הקריאה; <bdi>R</bdi> בטבלה מציין <bdi>Radial</bdi>.</td><td>אין לאחד תוצאות של אותו אורך גל במבטים שונים.</td><td><span class="chip sop">מעוגן SOP</span></td><td><bdi>SOP Table 1</bdi></td><td class="own">—</td><td></td></tr>
+<tr data-status="SOP_CONFIRMED"><td class="rid">LIN-003</td><td>הריכוז הנמדד חייב להימצא בטווח הדיווח של הקו.</td><td>מחוץ לטווח → הקו נפסל; אם אין חלופה → <bdi>HOLD</bdi>/מיהול חוזר.</td><td><span class="chip sop">מעוגן SOP</span></td><td><bdi>SOP Table 1</bdi></td><td class="own">—</td><td></td></tr>
+<tr data-status="OPEN_DECISION"><td class="rid">LIN-004</td><td>אם כמה קווים עומדים בכל התנאים, נבחר הקו בעל <bdi>Priority</bdi> הגבוה ביותר.</td><td>העדיפות נשמרת כנתון אב לפי <bdi>Method × Element × Range</bdi>.</td><td><span class="chip open">הכרעה פתוחה</span></td><td>נדרשת היררכיה</td><td class="own">—</td><td><a class="dref" href="#d05">D-05 (חוסם)</a></td></tr>
+<tr data-status="OPEN_DECISION"><td class="rid">LIN-005</td><td>אם כמה קווים תקינים נותנים תוצאות שונות מעבר לסף מוסכם.</td><td><bdi>WARNING/FAIL</bdi> לפי הסף; נדרשת סקירה של ספקטרום/הפרעה.</td><td><span class="chip open">הכרעה פתוחה</span></td><td>נדרש סף השוואה</td><td class="own">—</td><td><a class="dref" href="#d05">D-05 (חוסם)</a></td></tr>
+<tr data-status="WORKING_DECISION"><td class="rid">LIN-006</td><td>קו חלופי יכול להיבחר עקב תחום, רוויה או הפרעה רק לפי סיבה מקודדת.</td><td>הבחירה והסיבה נשמרות; שינוי לאחר שמירה יוצר <bdi>Revision</bdi>.</td><td><span class="chip work">החלטת עבודה</span></td><td>החלטת עבודה</td><td class="own">—</td><td></td></tr>
+</tbody></table></div>
+<div class="famblock"><h3>ד. ריכוז, מיהול, תחום ודיווח <span style="color:var(--soft);font-weight:400">(6 כללים)</span></h3>
+<table class="data-table"><thead><tr><th class="rid">מזהה</th><th style="width:30%">הכלל</th><th style="width:26%">פעולת המערכת</th><th>מעמד</th><th>מקור / הערה</th><th>בעלים</th><th>הכרעה</th></tr></thead><tbody>
+<tr data-status="WORKING_DECISION"><td class="rid">CON-001</td><td>נשמרים בנפרד “ריכוז”, <bdi>Dilution Factor</bdi> ו“ריכוז סופי”.</td><td>אין לדרוס את הריכוז שקדם למיהול.</td><td><span class="chip work">החלטת עבודה</span></td><td>החלטת עבודה</td><td class="own">—</td><td></td></tr>
+<tr data-status="OPEN_DECISION"><td class="rid">CON-002</td><td>המערכת מחשבת מחדש: ריכוז × פקטור מיהול.</td><td>אי־התאמה מעבר לסבילות מאושרת → <bdi>FAIL/HOLD</bdi>.</td><td><span class="chip open">הכרעה פתוחה</span></td><td>נדרשת סבילות</td><td class="own">—</td><td><a class="dref" href="#d08">D-08 (חוסם)</a></td></tr>
+<tr data-status="WORKING_DECISION"><td class="rid">CON-003</td><td>פקטור מיהול חייב להיות חיובי, מתועד ומקושר למנת עבודה/הרצה.</td><td>פקטור חסר או בלתי סביר → <bdi>HOLD</bdi>.</td><td><span class="chip work">החלטת עבודה</span></td><td>עקיבות</td><td class="own">—</td><td></td></tr>
+<tr data-status="SOP_CONFIRMED"><td class="rid">CON-004</td><td>תוצאה מעל תחום העקום/הקו אינה משתחררת אוטומטית.</td><td>נפתחת משימת מיהול ומדידה חוזרת.</td><td><span class="chip sop">מעוגן SOP</span></td><td><bdi>SOP</bdi> §9.3, §12</td><td class="own">—</td><td></td></tr>
+<tr data-status="SOP_CONFIRMED"><td class="rid">CON-005</td><td>הדיווח מוגבל לעד שתי ספרות משמעותיות.</td><td>העיגול מתבצע בשכבת הדיווח; הערך המלא נשמר.</td><td><span class="chip sop">מעוגן SOP</span></td><td><bdi>SOP</bdi> §12.1</td><td class="own">—</td><td></td></tr>
+<tr data-status="OPEN_DECISION"><td class="rid">CON-006</td><td>תוצאה מתחת ל־<bdi>LLOQ</bdi>/שלילית מטופלת לפי כלל דיווח מאושר.</td><td>אין להמציא אפס; נשמר הערך ונוצר <bdi>Reported Qualifier</bdi> מתאים.</td><td><span class="chip open">הכרעה פתוחה</span></td><td>כלל דיווח חסר</td><td class="own">—</td><td><a class="dref" href="#d07">D-07 (חוסם)</a></td></tr>
+</tbody></table></div>
+<div class="famblock"><h3>ה. GO / NO-GO לכיול, בקרות ומקטע ההרצה <span style="color:var(--soft);font-weight:400">(11 כללים)</span></h3>
+<table class="data-table"><thead><tr><th class="rid">מזהה</th><th style="width:30%">הכלל</th><th style="width:26%">פעולת המערכת</th><th>מעמד</th><th>מקור / הערה</th><th>בעלים</th><th>הכרעה</th></tr></thead><tbody>
+<tr data-status="SOP_CONFIRMED"><td class="rid">QC-001</td><td><bdi>ICV</bdi> בטווח ±10% מן הערך האמיתי וממקור נפרד מסטנדרטי הכיול.</td><td>כשל → הכיול אינו מאומת.</td><td><span class="chip sop">מעוגן SOP</span></td><td><bdi>SOP</bdi> §9.6</td><td class="own">—</td><td></td></tr>
+<tr data-status="SOP_CONFIRMED"><td class="rid">QC-002</td><td><bdi>CCV</bdi> בטווח ±10% מן הערך האמיתי.</td><td>כשל → <bdi>NO-GO</bdi> לאותו יסוד; קביעת טווח ההשפעה.</td><td><span class="chip sop">מעוגן SOP</span></td><td><bdi>SOP</bdi> §9.8</td><td class="own">—</td><td></td></tr>
+<tr data-status="SOP_CONFIRMED"><td class="rid">QC-003</td><td><bdi>CCV</bdi> ו־<bdi>CCB</bdi> נבדקים לאחר כל 10 דגימות ובסוף ההרצה.</td><td>המערכת יוצרת <bdi>QC Segment</bdi> ומקשרת את הדגימות שבין שתי נקודות אימות.</td><td><span class="chip sop">מעוגן SOP</span></td><td><bdi>SOP</bdi> §9.8</td><td class="own">—</td><td></td></tr>
+<tr data-status="OPEN_DECISION"><td class="rid">QC-004</td><td><bdi>Blank</bdi> תקין אם האנליט מתחת לגבול שנקבע לסוג ה־<bdi>Blank</bdi>.</td><td>כשל מחזיק את היסוד והמקטע המושפעים.</td><td><span class="chip open">הכרעה פתוחה</span></td><td>ב־<bdi>SOP</bdi>: <bdi>½ LLOQ</bdi> וגם <bdi>LLOQ</bdi></td><td class="own">—</td><td><a class="dref" href="#d03">D-03 (חוסם)</a></td></tr>
+<tr data-status="SOP_CONFIRMED"><td class="rid">QC-005</td><td>אם אימות הכיול נכשל: מפסיקים, מאתרים סיבה, מכיילים מחדש ומודדים מחדש מאז ה־<bdi>CCV</bdi> התקין האחרון.</td><td>יצירת <bdi>NO-GO</bdi> ורשימת <bdi>Impact</bdi> אוטומטית.</td><td><span class="chip sop">מעוגן SOP</span></td><td><bdi>SOP</bdi> §9.8</td><td class="own">—</td><td></td></tr>
+<tr data-status="SOP_CONFIRMED"><td class="rid">QC-006</td><td><bdi>Recovery</bdi> של ה־<bdi>Internal Standard</bdi> בטווח 70–130%.</td><td>מחוץ לטווח → מדידה חוזרת או בדיקת עקום; <bdi>HOLD</bdi> לתוצאה.</td><td><span class="chip sop">מעוגן SOP</span></td><td><bdi>SOP</bdi> §9.10</td><td class="own">—</td><td></td></tr>
+<tr data-status="SOP_CONFIRMED"><td class="rid">QC-007</td><td>לפחות 3 ממוצעי <bdi>Integration</bdi> לכל סטנדרט ודגימה.</td><td>מספר קטן יותר → כשל שלמות/<bdi>Method</bdi>.</td><td><span class="chip sop">מעוגן SOP</span></td><td><bdi>SOP</bdi> §11.3</td><td class="own">—</td><td></td></tr>
+<tr data-status="OPEN_DECISION"><td class="rid">QC-008</td><td>הרצה הכוללת “ארבע בקרות ו־<bdi>Blank</bdi>” והתרת כשל יחיד לאלמנט נמסרה ככלל עבודה.</td><td>אין לתכנת עד ליישוב מול כלל ה־<bdi>SOP</bdi> המחמיר.</td><td><span class="chip open">הכרעה פתוחה</span></td><td>סתירה מהותית</td><td class="own">—</td><td><a class="dref" href="#d02">D-02 (חוסם)</a></td></tr>
+<tr data-status="OPEN_DECISION"><td class="rid">QC-009</td><td>תדירות <bdi>ICV</bdi> אחרי כל 10 דגימות אינה עקבית בין סעיפי ה־<bdi>SOP</bdi> והנספח.</td><td>הכלל נשאר פרמטר כבוי/אזהרה עד להכרעה.</td><td><span class="chip open">הכרעה פתוחה</span></td><td>נדרש תיקון <bdi>SOP</bdi></td><td class="own">—</td><td><a class="dref" href="#d02">D-02 (חוסם)</a></td></tr>
+<tr data-status="SOP_CONFIRMED"><td class="rid">QC-010</td><td><bdi>Method Blank</bdi> נכלל בכל אצוות דגימות ועובר את כלל ההכנה המלא.</td><td>הרשומה מקושרת ל־<bdi>Preparation Batch</bdi> ולכל הדגימות שעליהן היא מגינה.</td><td><span class="chip sop">מעוגן SOP</span></td><td><bdi>SOP</bdi> §9.2</td><td class="own">—</td><td></td></tr>
+<tr data-status="SOP_CONFIRMED"><td class="rid">QC-011</td><td>שטיפה ב־<bdi>Rinse Blank</bdi> במשך 60 שניות לפחות בין כל סטנדרט ודגימה.</td><td>אימות הגדרת ה־<bdi>Method/Sequence</bdi>; חריגה נשמרת כאירוע שיטה.</td><td><span class="chip sop">מעוגן SOP</span></td><td><bdi>SOP</bdi> §4.4, §11.3</td><td class="own">—</td><td></td></tr>
+</tbody></table></div>
+<div class="famblock"><h3>ו. הפרעות, זיכרון ובדיקות תקופתיות <span style="color:var(--soft);font-weight:400">(6 כללים)</span></h3>
+<table class="data-table"><thead><tr><th class="rid">מזהה</th><th style="width:30%">הכלל</th><th style="width:26%">פעולת המערכת</th><th>מעמד</th><th>מקור / הערה</th><th>בעלים</th><th>הכרעה</th></tr></thead><tbody>
+<tr data-status="SOP_CONFIRMED"><td class="rid">INT-001</td><td>אחרי דגימה מעל <bdi>500 mg/L Na/Ca/Mg</bdi> או מעל <bdi>200 mg/L K</bdi>, הדגימות הבאות נמדדות מחדש בגלל <bdi>Memory Effect</bdi>.</td><td>סימון <bdi>Carryover Risk</bdi> ויצירת משימת מדידה חוזרת לטווח שיוגדר.</td><td><span class="chip sop">מעוגן SOP</span></td><td><bdi>SOP</bdi> §12.2</td><td class="own">—</td><td><a class="dref" href="#d09">D-09 (פרמטר פתוח)</a></td></tr>
+<tr data-status="SOP_CONFIRMED"><td class="rid">INT-002</td><td><bdi>K</bdi> ניתן לדיווח ללא מיהול עד <bdi>1000 mg/L Na</bdi>; מעל לכך נדרש מיהול.</td><td>חריגה → <bdi>HOLD</bdi> ל־<bdi>K</bdi> ומשימת מיהול.</td><td><span class="chip sop">מעוגן SOP</span></td><td><bdi>SOP</bdi> §12.3.1</td><td class="own">—</td><td></td></tr>
+<tr data-status="SOP_CONFIRMED"><td class="rid">INT-003</td><td><bdi>Sr</bdi> ניתן לדיווח ללא מיהול עד <bdi>500 mg/L Ca</bdi>; מעל לכך נדרש מיהול.</td><td>חריגה → <bdi>HOLD</bdi> ל־<bdi>Sr</bdi> ומשימת מיהול.</td><td><span class="chip sop">מעוגן SOP</span></td><td><bdi>SOP</bdi> §12.3.2</td><td class="own">—</td><td></td></tr>
+<tr data-status="SOP_CONFIRMED"><td class="rid">INT-004</td><td><bdi>SIC</bdi> נבדק אחת לרבעון; כל האנליטים מתחת למחצית <bdi>LLOQ</bdi>.</td><td>שמירה במודול <bdi>QA</bdi> והתראה על אי־עמידה.</td><td><span class="chip sop">מעוגן SOP</span></td><td><bdi>SOP</bdi> §9.9</td><td class="own">—</td><td></td></tr>
+<tr data-status="SOP_CONFIRMED"><td class="rid">PER-001</td><td><bdi>LDR</bdi> ל־<bdi>Ca/Na/Mg/K</bdi> מאומת כל 6 חודשים; <bdi>Recovery ±10%</bdi>.</td><td>פג תוקף → חסימת שיטה/<bdi>Warning</bdi> לפי החלטת איכות.</td><td><span class="chip sop">מעוגן SOP</span></td><td><bdi>SOP</bdi> §9.3</td><td class="own">—</td><td></td></tr>
+<tr data-status="SOP_CONFIRMED"><td class="rid">PER-002</td><td><bdi>LLOQ</bdi> מאומת רבעונית; <bdi>Mean Recovery ±20%</bdi> ו־<bdi>RSD &lt;10%</bdi>.</td><td>שמירה במודול <bdi>QA</bdi>; פג תוקף או כשל → פעולה לפי נוהל.</td><td><span class="chip sop">מעוגן SOP</span></td><td><bdi>SOP</bdi> §9.5</td><td class="own">—</td><td></td></tr>
+</tbody></table></div>
+<div class="famblock"><h3>ז. Spike, Duplicate, חזרות ובחירת תוצאה <span style="color:var(--soft);font-weight:400">(9 כללים)</span></h3>
+<table class="data-table"><thead><tr><th class="rid">מזהה</th><th style="width:30%">הכלל</th><th style="width:26%">פעולת המערכת</th><th>מעמד</th><th>מקור / הערה</th><th>בעלים</th><th>הכרעה</th></tr></thead><tbody>
+<tr data-status="SOP_CONFIRMED"><td class="rid">QA-001</td><td><bdi>Recovery</bdi> של <bdi>MS/MSD</bdi> בטווח 75–125%.</td><td>חישוב אוטומטי, <bdi>GO/NO-GO</bdi> והעברה למודול <bdi>Spike QA</bdi>.</td><td><span class="chip sop">מעוגן SOP</span></td><td><bdi>SOP</bdi> §9.4.1</td><td class="own">—</td><td></td></tr>
+<tr data-status="SOP_CONFIRMED"><td class="rid">QA-002</td><td><bdi>RPD</bdi> של <bdi>Duplicate</bdi> או <bdi>MS/MSD ≤20%</bdi>.</td><td>חישוב אוטומטי, <bdi>GO/NO-GO</bdi> והעברה למודול <bdi>Duplicate QA</bdi>; נוסחת החישוב המדויקת תאושר בנתוני האב.</td><td><span class="chip sop">מעוגן SOP</span></td><td><bdi>SOP</bdi> §9.4</td><td class="own">—</td><td></td></tr>
+<tr data-status="WORKING_DECISION"><td class="rid">QA-003</td><td>כל <bdi>ICV/CCV/Standard</bdi> נשמר גם כרשומת <bdi>QA</bdi> לאורך זמן.</td><td>הערך, <bdi>Recovery</bdi>, לוט, קו, מבט, עקום, מכשיר ותאריך נשלחים לסדרת זמן.</td><td><span class="chip work">החלטת עבודה</span></td><td>דרישת עבודה</td><td class="own">—</td><td></td></tr>
+<tr data-status="SOP_CONFIRMED"><td class="rid">QA-004</td><td>בפרויקט חדש, ופעם בשנה בפרויקט קיים, נכלל <bdi>MS</bdi>+<bdi>Duplicate</bdi> כאשר צפויים אנליטים, או <bdi>MS/MSD</bdi> כאשר אינם צפויים.</td><td>בדיקת תדירות, סוג הזוג וקישור לדגימת המקור; <bdi>Spike</bdi> ברמה שבין הסטנדרט הנמוך לאמצעי.</td><td><span class="chip sop">מעוגן SOP</span></td><td><bdi>SOP</bdi> §9.4.1</td><td class="own">—</td><td></td></tr>
+<tr data-status="WORKING_DECISION"><td class="rid">REP-001</td><td>כל ההרצות והחזרות של אותה דגימה נשמרות ומוצגות יחד.</td><td>אין דריסה; לכל ניסיון מזהה וסטטוס נפרדים.</td><td><span class="chip work">החלטת עבודה</span></td><td>דרישת עבודה</td><td class="own">—</td><td></td></tr>
+<tr data-status="WORKING_DECISION"><td class="rid">REP-002</td><td>לכל <bdi>Sample × Element</bdi> קיימת תוצאה נבחרת אחת בלבד בכל גרסה.</td><td>בחירה חדשה מבטלת לוגית את הקודמת ויוצרת <bdi>Revision</bdi>.</td><td><span class="chip work">החלטת עבודה</span></td><td>דרישת עבודה</td><td class="own">—</td><td></td></tr>
+<tr data-status="OPEN_DECISION"><td class="rid">REP-003</td><td>המערכת ממליצה על ניסיון <bdi>PASS</bdi>; המפעיל רשאי לבחור ניסיון אחר לפי הרשאה.</td><td>בחירה שונה מההמלצה מחייבת סיבה; כללים לבחירת <bdi>WARNING/FAIL</bdi> דורשים הכרעה.</td><td><span class="chip open">הכרעה פתוחה</span></td><td>מדיניות <bdi>Override</bdi></td><td class="own">—</td><td><a class="dref" href="#d06">D-06 (חוסם)</a></td></tr>
+<tr data-status="WORKING_DECISION"><td class="rid">APP-001</td><td>תוצאה עוברת למנהל רק לאחר סיום טיפול ואישור מפעיל.</td><td>רשומה חסרה/פתוחה נשארת בתור המפעיל.</td><td><span class="chip work">החלטת עבודה</span></td><td>דרישת עבודה</td><td class="own">—</td><td></td></tr>
+<tr data-status="WORKING_DECISION"><td class="rid">APP-002</td><td>כל שינוי ערך, קו, עקום, מיהול, סטטוס או בחירה נשמר ב־<bdi>Audit Trail</bdi>.</td><td>מי, מתי, ערך קודם/חדש, סיבה ומסמכים תומכים.</td><td><span class="chip work">החלטת עבודה</span></td><td>ניהול איכות</td><td class="own">—</td><td></td></tr>
+</tbody></table></div>
+  <!-- CATALOG:END -->
+</section>
+
+<section id="s5">
+  <div class="sec-h"><span class="num">§5</span><h2>כללים מועמדים — הצעות מהבדיקה הצולבת</h2></div>
+  <p><strong>אלה אינם כללים.</strong> הם פערים שעלו בהצלבה מול מפת יכולות ה-LIMS הכללית ומול נוסח ה-SOP, מוגשים לבדיקת הצוות. מועמד שיאושר — יתווסף לקטלוג (ל-<bdi>CSV</bdi>) עם מעמד, בעלים ומקור; מועמד שיידחה — יירשם ככזה. מקור ההצעות: ניתוח מודל (Claude, ‏2026-08-03), מסומן <span class="chip cand">מועמד</span>.</p>
+  <table class="data-table">
+    <thead><tr><th class="rid">מזהה</th><th>ההצעה</th><th>הנימוק והמקור</th><th>ישויך אם יאושר</th></tr></thead>
+    <tbody>
+      <tr><td class="rid">CAND-01</td><td>חסימת שיבוץ סטנדרט/ריאגנט שפג תוקפו לריצה; עקיפה רק בהרשאה + נימוק</td><td>טבלה 2 ב-SOP קובעת תוקף "חודש" לכל תמיסות הכיול — אך אף כלל בקטלוג אינו אוכף תוקף. <bdi>QA-003</bdi> שומר לוט, לא חוסם</td><td>משפחה ב או ה</td></tr>
+      <tr><td class="rid">CAND-02</td><td>שער כשירות מכשיר ביצירת ריצה: כיול תקופתי/אחזקה בתוקף</td><td>ה-SOP מפנה ל-<bdi>W-12</bdi> (הפעלת מכשיר); אין כלל שקושר סטטוס כשירות לריצה</td><td>משפחה א (קדם-ריצה)</td></tr>
+      <tr><td class="rid">CAND-03</td><td>בקרת <bdi>Holding Time</bdi>: התראה לפני חריגה, חסימה/אישור-חריג אחריה</td><td>קיים באפיון v0.1 (שלב 2) ונשמט מהקטלוג; ה-SOP דורש סינון והחמצה עד 72 שעות (<bdi>§8</bdi>)</td><td>קדם-מנוע (שלב הכנה)</td></tr>
+      <tr><td class="rid">CAND-04</td><td>התפשטות מסמן (<bdi>Qualifier</bdi>) מהתוצאה ועד הדוח — כשדה מובנה, לא הערת טקסט</td><td>משלים את <bdi>CON-006</bdi> ואת מחלקה 2 במסגרת ההכרעה D-06; בלי זה עקיפה מבוקרת אינה נראית בתעודה</td><td>משפחה ד או ז</td></tr>
+      <tr><td class="rid">CAND-05</td><td>אי-ודאות והצהרת תואמות: צירוף אי-ודאות לתוצאה וכלל החלטה לפי <bdi>ILAC G8</bdi></td><td>נדרש באפיון v0.1&rlm; (<bdi>O-10</bdi>, מקורות §20) ונעדר מהקטלוג; רלוונטי לדיווח-ציות</td><td>משפחה ד (דיווח)</td></tr>
+      <tr><td class="rid">CAND-06</td><td>ממשל עיבוד-מחדש בתוכנת המכשיר: מי רשאי לשנות אינטגרציה/עקום ב-<bdi>Analyzer Pro</bdi>, ואיך השינוי מתועד במקור</td><td>הבחירה עברה למנוע (A4) אך סקירת הספקטרום נשארת במכשיר; בלי ממשל בצד המכשיר — העקיבות נשברת לפני הייצוא (קשור <bdi>O-05</bdi> באפיון v0.1)</td><td>נוהל + דרישת ממשק</td></tr>
+      <tr><td class="rid">CAND-07</td><td>יישוב אנומליית ה-<bdi>Ni</bdi>: ‏<bdi>LLOQ</bdi> מוצהר <bdi>0.05</bdi> אך כל קווי הדיווח מתחילים ב-<bdi>0.5</bdi></td><td>בטבלה 1 אין ל-<bdi>Ni</bdi> קו המדווח <bdi>0.05–0.5</bdi> — ה-<bdi>LLOQ</bdi> המוצהר אינו בר-דיווח באף קו. נדרש תיקון טבלה או עדכון <bdi>LLOQ</bdi></td><td>נתוני אב §7.1 + D-11</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="s6">
+  <div class="sec-h"><span class="num">§6</span><h2>נקודות התייחסות — פערים שנמצאו בבחינת v0.2 ובקובץ הייצוא האמיתי</h2></div>
+  <table class="data-table">
+    <thead><tr><th class="rid">#</th><th>הממצא</th><th>מה נדרש</th></tr></thead>
+    <tbody>
+      <tr><td class="rid">A1</td><td><strong>פורמט הייצוא:</strong> הקובץ האמיתי הוא <bdi>Excel</bdi> רב-גיליוני (11 גיליונות) — לא <bdi>CSV</bdi> כהנחת v0.2; העמודות הסוגרות אף לא מיושרות לכותרות</td><td>עדכון תפיסת הקליטה ב-D-01: פרסר <bdi>Excel</bdi> רב-גיליוני עם מיפוי-שדות מאומת-תוכן; ‏<bdi>ING-001/002</bdi> בהתאם</td></tr>
+      <tr><td class="rid">A2</td><td><strong>עמודת <bdi>Operator</bdi> ריקה — אומת בקובץ האמיתי (55/55 שורות)</strong> — ו"משתמש אישי לכל פעולה" הוא עיקרון-על</td><td>בדיקה עם משתמש אישי בתוכנת המכשיר, או מקור זהות מאומת חלופי במעטפת הקליטה (D-01)</td></tr>
+      <tr><td class="rid">A3</td><td><strong>אנומליית <bdi>Ni</bdi> בטבלה 1</strong> (ראו <bdi>CAND-07</bdi>)</td><td>תיקון נתוני האב לפני טעינה; בדיקה שאין מקרים דומים נוספים</td></tr>
+      <tr><td class="rid">A4</td><td><strong>הפיבוט הארכיטקטוני לא תועד כהחלטה:</strong> אפיון v0.1 המליץ שהבחירה המקצועית תבוצע בתוכנת המכשיר וייוצא רק הנבחר (<bdi>LIMS_FINAL</bdi>); ‏v0.2 העביר את הבחירה למנוע החיצוני (ייצוא כל המועמדים). לבחירה החדשה השלכות: שכבת העיבוד הופכת מערכת ממוחשבת הטעונה תיקוף (נוהל ISRAC ‏<bdi>1-175472</bdi>, ‏<bdi>ISO/IEC 17025 §7.11</bdi>), נדרש קישור-חזרה לספקטרום, וסקירת הספקטרום עצמה נשארת במכשיר</td><td>רישום ההחלטה עם נימוק ותיחום: מה בשכבה ומה ב-LIMS (שולחן מפעיל? אישורים? <bdi>Audit Trail</bdi>?) — גם כתשומה לבחינת ספק ה-LIMS</td></tr>
+      <tr><td class="rid">A5</td><td><strong>סתירות פנימיות ב-SOP</strong> (אומתו מול הנוסח): גבול <bdi>Blank</bdi> ‏(<bdi>½LLOQ</bdi> מול <bdi>LLOQ</bdi>), תדירות <bdi>ICV</bdi> ‏(<bdi>§9.8</bdi> מול <bdi>§11.5</bdi> מול הנספח), וכלל "ארבע בקרות/כשל יחיד" מול כלל העצירה</td><td>הכרעות D-02, D-03 ← עדכון SOP בגרסה מבוקרת</td></tr>
+      <tr><td class="rid">A6</td><td><strong>פער היקף יסודות:</strong> ‏11 ב-<bdi>Scope</bdi> מול 21 בטבלה 1 מול היקף ההסמכה בפועל</td><td>הכרעה D-11 לפני טעינת נתוני האב</td></tr>
+      <tr><td class="rid">A7</td><td><strong>המיהול אינו בשדה המיועד לו:</strong> בקובץ האמיתי <bdi>Dilution Factor</bdi> = 1 בכל השורות, והמיהול האמיתי מוצפן בשם הדגימה ("<bdi>AC_459_1/10</bdi>", "<bdi>IHS_54_1/50</bdi>")</td><td>בלעדי תיקון — <bdi>CON-001/002/003</bdi> אינם ניתנים להרצה. הכרעה ב-D-01: מילוי השדה ב-<bdi>Sequence</bdi> כחובת עבודה, או כלל פענוח-שמות מאושר + אימות כפול</td></tr>
+      <tr><td class="rid">A8</td><td><strong>סיווג רשומות לפי שמות חופשיים בלבד:</strong> ‏"<bdi>CCV 1</bdi>"/"<bdi>CCV_50</bdi>", שלוש וריאציות רישיות ל-<bdi>Blank</bdi>, ‏"<bdi>MB</bdi>", ‏"<bdi>STOCK_10</bdi>"/"<bdi>LFS_1/10</bdi>"/"<bdi>LFS_1/100</bdi>" ‏(ICV), ‏"<bdi>Sis_*</bdi>" ‏(SIC), ‏"<bdi>*_dup</bdi>", ‏"<bdi>*_ms_*</bdi>", קידומת "<bdi>RE_</bdi>" לחזרה; קישור <bdi>Spike</bdi> לדגימת-האם קיים בשם בלבד — בדיוק החשש של <bdi>CLS-002</bdi></td><td>מילון שמות מנורמל (רגישות-רישיות!) כחלק מ-D-01/§7.4, או מוסכמת שמות מחייבת ב-<bdi>Sequence</bdi>; רשימת הקידומות שנצפו — נקודת פתיחה</td></tr>
+      <tr><td class="rid">A9</td><td><strong>אי-התאמות מתודה⇄SOP בקווים:</strong> קו <bdi>Pb 220.353</bdi> פעיל במתודה אך אינו בטבלה 1 (שם: <bdi>213.857</bdi>); ל-<bdi>Li</bdi> שתי עמודות ייצוא באותו שם — סיומת ה-<bdi>R</bdi> אבדה וזהות המבט נשברת (<bdi>LIN-002</bdi>)</td><td>יישור טבלת הקווים המבוקרת מול המתודה בפועל (D-05/D-11); תיקון שמות הקווים במתודה או מיפוי לפי גיליון <bdi>Line Definitions</bdi></td></tr>
+    </tbody>
+  </table>
+  <div class="note warn"><strong>הבהרת גבול אחריות:</strong> הסתירות והפערים לעיל הם ממצאי בדיקה — לא הכרעות. ההכרעה המקצועית היא של צוות המעבדה ומנהל האיכות, ותיעודה במקור מבוקר הוא תנאי למימוש.</div>
+</section>
+
+<section id="s7">
+  <div class="sec-h"><span class="num">§7</span><h2>נתוני אב — מה שיש ומה שנותר למלא</h2></div>
+
+  <h3>7.1 קווים, מבטים וטווחי דיווח (מתוך טבלה 1 ב-SOP) — בסיס לנתוני האב</h3>
+  <p><bdi>A</bdi> = ‏<bdi>Axial</bdi>; ‏<bdi>R</bdi> = ‏<bdi>Radial</bdi> (על-פי הערת ה-SOP, קו ללא סימון הוא <bdi>Axial</bdi>). יש לאשר שזו הגרסה המבוקרת הפעילה; שורת ה-<bdi>Ni</bdi> מסומנת — ראו <bdi>CAND-07</bdi>.</p>
+  <table class="data-table">
+    <thead><tr><th>יסוד</th><th><bdi>LLOQ mg/L</bdi></th><th>קו / מבט</th><th>טווח דיווח <bdi>mg/L</bdi></th></tr></thead>
+    <tbody>
+      <tr><td><bdi>Na</bdi></td><td><bdi>1</bdi></td><td><bdi>589.592 A; 588.995 A; 589.592 R; 330.298 R</bdi></td><td><bdi>1–5; 1–5; 5–500; 50–500</bdi></td></tr>
+      <tr><td><bdi>K</bdi></td><td><bdi>0.5</bdi></td><td><bdi>766.491 A; 769.896 A; 766.491 R; 769.896 R</bdi></td><td><bdi>0.5–5; 0.5–5; 5–500; 5–500</bdi></td></tr>
+      <tr><td><bdi>Mg</bdi></td><td><bdi>0.1</bdi></td><td><bdi>285.213 A; 279.079 A; 279.079 R; 285.213 R</bdi></td><td><bdi>0.1–50; 0.1–50; 50–500; 50–500</bdi></td></tr>
+      <tr><td><bdi>Ca</bdi></td><td><bdi>0.5</bdi></td><td><bdi>393.366 A; 396.847 A; 317.933 A; 422.673 A</bdi></td><td><bdi>0.5–1; 0.5–5; 1–500; 10–200</bdi></td></tr>
+      <tr><td><bdi>Al</bdi></td><td><bdi>0.05</bdi></td><td><bdi>167.078 A; 396.152 A</bdi></td><td><bdi>0.05–1; 0.05–10</bdi></td></tr>
+      <tr><td><bdi>As</bdi></td><td><bdi>0.05</bdi></td><td><bdi>189.042 A; 193.759 A</bdi></td><td><bdi>0.05–5; 0.05–10</bdi></td></tr>
+      <tr><td><bdi>B</bdi></td><td><bdi>0.05</bdi></td><td><bdi>249.773 A; 249.677 A; 182.641 A</bdi></td><td><bdi>0.05–10; 0.05–10; 0.05–5</bdi></td></tr>
+      <tr><td><bdi>Ba</bdi></td><td><bdi>0.01</bdi></td><td><bdi>233.527 A; 455.404 A</bdi></td><td><bdi>0.01–10; 0.01–10</bdi></td></tr>
+      <tr><td><bdi>Be</bdi></td><td><bdi>0.01</bdi></td><td><bdi>234.861 A; 313.042 A; 313.107 A</bdi></td><td><bdi>0.01–10; 0.01–1; 0.01–10</bdi></td></tr>
+      <tr><td><bdi>Cd</bdi></td><td><bdi>0.01</bdi></td><td><bdi>214.438 A; 226.502 A</bdi></td><td><bdi>0.01–1; 0.01–10</bdi></td></tr>
+      <tr><td><bdi>Cr</bdi></td><td><bdi>0.05</bdi></td><td><bdi>267.716 A; 283.563 A</bdi></td><td><bdi>0.05–5; 1–10</bdi></td></tr>
+      <tr><td><bdi>Co</bdi></td><td><bdi>0.01</bdi></td><td><bdi>228.616 A; 238.892 A</bdi></td><td><bdi>0.01–10; 0.01–5</bdi></td></tr>
+      <tr><td><bdi>Cu</bdi></td><td><bdi>0.05</bdi></td><td><bdi>324.754 A; 224.700 A; 327.396 A</bdi></td><td><bdi>0.05–10; 0.05–1; 0.05–1</bdi></td></tr>
+      <tr><td><bdi>Fe</bdi></td><td><bdi>0.05</bdi></td><td><bdi>238.204 A; 259.941 A</bdi></td><td><bdi>0.05–1; 0.05–10</bdi></td></tr>
+      <tr><td><bdi>Li</bdi></td><td><bdi>0.01</bdi></td><td><bdi>670.780 R; 670.780 A</bdi></td><td><bdi>0.01–10; 0.01–10</bdi></td></tr>
+      <tr><td><bdi>Mn</bdi></td><td><bdi>0.05</bdi></td><td><bdi>257.611 A; 259.373 A</bdi></td><td><bdi>0.05–10; 0.05–5</bdi></td></tr>
+      <tr style="background:var(--warn-soft)"><td><bdi>Ni</bdi> ⚠</td><td><bdi>0.05</bdi></td><td><bdi>221.648 A; 231.604 A; 232.003 A</bdi></td><td><bdi>0.5–1; 0.5–10; 0.5–10</bdi> — אין כיסוי <bdi>0.05–0.5</bdi></td></tr>
+      <tr><td><bdi>Pb</bdi></td><td><bdi>0.05</bdi></td><td><bdi>213.857 A; 283.305 A</bdi></td><td><bdi>0.05–1; 0.5–10</bdi></td></tr>
+      <tr><td><bdi>Se</bdi></td><td><bdi>0.05</bdi></td><td><bdi>196.090 A; 204.050 A</bdi></td><td><bdi>0.05–5; 0.5–10</bdi></td></tr>
+      <tr><td><bdi>Sr</bdi></td><td><bdi>0.05</bdi></td><td><bdi>407.771 A; 421.552 A</bdi></td><td><bdi>0.05–1; 0.5–10</bdi></td></tr>
+      <tr><td><bdi>Zn</bdi></td><td><bdi>0.05</bdi></td><td><bdi>213.856 A; 206.200 A</bdi></td><td><bdi>0.05–5; 0.05–10</bdi></td></tr>
+    </tbody>
+  </table>
+
+  <h3>7.2 תבנית טבלת עדיפות עקומים (למילוי — כרטיס <a class="dref" href="#d04">D-04</a>)</h3>
+  <table class="data-table">
+    <thead><tr><th>יסוד</th><th>עקום</th><th>תחום שימוש <bdi>mg/L</bdi></th><th>עדיפות</th><th>חפיפה עם</th><th>הערות</th></tr></thead>
+    <tbody>
+      <tr><td colspan="6" style="color:var(--soft);font-size:12.5px">שורת המחשה (אינה נתון): <bdi>Na</bdi> · ‏<bdi>Low-Trace</bdi> · ‏<bdi>0.01–10</bdi> · ‏1 · ‏<bdi>High-Major</bdi> · בחירה לפי הריכוז שלפני מיהול</td></tr>
+      <tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td></tr>
+    </tbody>
+  </table>
+
+  <h3>7.3 תבנית טבלת עדיפות קווים ומבטים (למילוי — כרטיס <a class="dref" href="#d05">D-05</a>)</h3>
+  <table class="data-table">
+    <thead><tr><th>יסוד</th><th>תחום ריכוז</th><th>קו ראשי (קו/מבט)</th><th>חלופות לפי סדר</th><th>סיבות מעבר מקודדות</th><th>סף השוואה בין קווים</th></tr></thead>
+    <tbody>
+      <tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td></tr>
+    </tbody>
+  </table>
+
+  <h3>7.4 הצעת מילון קודי סוגי-רשומה (לאישור בכרטיס <a class="dref" href="#d01">D-01</a>)</h3>
+  <p>הצעה בלבד, נגזרת מהגדרות ה-SOP. בקובץ האמיתי אין שדה סוג-רשומה — השמות חופשיים (ראו A8), ולכן לצד הקוד מוצג גם דפוס-השם שנצפה בפועל; המילון הסופי חייב נרמול רישיות וקידומות:</p>
+  <table class="data-table">
+    <thead><tr><th>קוד מוצע</th><th>משמעות</th><th>דפוס שנצפה בקובץ</th><th>מסלול</th></tr></thead>
+    <tbody>
+      <tr><td class="rid">CAL</td><td>סטנדרט כיול</td><td>בגיליונות הרגרסיה (<bdi>Blank, 0.01…200</bdi>)</td><td>בניית עקום</td></tr>
+      <tr><td class="rid">ICB / CCB</td><td>בלנק כיול התחלתי / מתמשך</td><td>"<bdi>Blank</bdi>" / "<bdi>blank</bdi>" / "<bdi>BLANK</bdi>" — ההבחנה ביניהם טעונה אישור</td><td><bdi>QC</bdi> — גבול לפי D-03</td></tr>
+      <tr><td class="rid">ICV / CCV</td><td>אימות כיול התחלתי / מתמשך</td><td>"<bdi>STOCK_10</bdi>", "<bdi>LFS_1/10</bdi>", "<bdi>LFS_1/100</bdi>" ‏(ICV); ‏"<bdi>CCV 1</bdi>", "<bdi>CCV_50</bdi>"</td><td><bdi>QC</bdi> — ‏<bdi>±10%</bdi></td></tr>
+      <tr><td class="rid">MB</td><td><bdi>Method Blank</bdi> (עובר הכנה מלאה)</td><td>"<bdi>MB</bdi>"</td><td><bdi>QC</bdi> הכנה; מקושר לאצווה</td></tr>
+      <tr><td class="rid">RB</td><td><bdi>Rinse Blank</bdi></td><td>לא זוהה בקובץ — לאישור</td><td>שטיפה; אינו בקרת קבלה</td></tr>
+      <tr><td class="rid">SMP</td><td>דגימה (כולל חזרה)</td><td>"<bdi>AC_459_1/10</bdi>", "<bdi>MA_54</bdi>", מזהה מספרי; קידומת "<bdi>RE_</bdi>" = מדידה חוזרת; המיהול בסיומת השם (A7)</td><td>תוצאה</td></tr>
+      <tr><td class="rid">MS / MSD</td><td><bdi>Matrix Spike</bdi> / כפולתו</td><td>"<bdi>Var_9_ms_Na</bdi>", "<bdi>MA_54_ms_B_300 ppb</bdi>" — היסוד והכמות בשם</td><td><bdi>QA</bdi> — ‏<bdi>Recovery 75–125%</bdi>, ‏<bdi>RPD≤20%</bdi></td></tr>
+      <tr><td class="rid">DUP</td><td>כפולת דגימה</td><td>"<bdi>Var_9_dup</bdi>", "<bdi>MA_54_Dup</bdi>"</td><td><bdi>QA</bdi> — ‏<bdi>RPD</bdi></td></tr>
+      <tr><td class="rid">SIC</td><td>בדיקת הפרעה ספקטרלית (רבעונית)</td><td>"<bdi>Sis_Al+Fe</bdi>", "<bdi>Sis_Mg</bdi>", "<bdi>Sis_Ca</bdi>"</td><td><bdi>QA</bdi> תקופתי</td></tr>
+      <tr><td class="rid">LLOQV / LDRV</td><td>אימות <bdi>LLOQ</bdi> (רבעוני) / ‏<bdi>LDR</bdi> (חצי-שנתי)</td><td>לא זוהה בקובץ — לאישור</td><td><bdi>QA</bdi> תקופתי</td></tr>
+      <tr><td class="rid">?</td><td>לא מזוהה — טעון בירור מול הצוות</td><td>"<bdi>IHS_53_1/5</bdi>", "<bdi>IHS_54_1/50</bdi>", "<bdi>IHS_55_1/5</bdi>"</td><td>—</td></tr>
+    </tbody>
+  </table>
+</section>
+
+</div>
+
+<footer>
+  <span><b>מסמך:</b> חוברת עבודה — מנוע הכללים <bdi>ICP-OES</bdi></span>
+  <span><b>גרסה:</b> 0.3 · 2026-08-03</span>
+  <span><b>מעמד:</b> טיוטת עבודה — אינה נוהל מבוקר; במחלוקת גובר ה-<bdi>SOP</bdi></span>
+  <span><b>מקורות:</b> v0.2 ‏(ChatGPT) · ‏<bdi>SOP-05</bdi> · אימות מודל 2026-08-03</span>
+  <span><b>מקור-אמת לכללים:</b> <bdi>ICP_LIMS_RULE_CATALOG_he.csv</bdi></span>
+</footer>
+
+<script>
+(function(){
+  var status='all';
+  var btns=document.querySelectorAll('.fbtn');
+  function apply(){
+    var shown=0,total=0;
+    document.querySelectorAll('#s4 tbody tr[data-status]').forEach(function(tr){
+      total++;
+      var ok=(status==='all'||tr.dataset.status===status);
+      tr.classList.toggle('hidden',!ok);
+      if(ok)shown++;
+    });
+    document.querySelectorAll('#s4 .famblock').forEach(function(b){
+      var vis=b.querySelectorAll('tbody tr[data-status]:not(.hidden)').length;
+      b.classList.toggle('hidden',vis===0);
+    });
+    var c=document.getElementById('count');
+    if(c)c.textContent='מוצגים '+shown+' מתוך '+total+' כללים';
+  }
+  btns.forEach(function(b){
+    b.addEventListener('click',function(){
+      status=b.dataset.status;
+      btns.forEach(function(x){x.classList.toggle('on',x===b);});
+      apply();
+    });
+  });
+  apply();
+})();
+</script>
+
+</body>
+</html>

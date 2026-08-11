@@ -1,0 +1,719 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>תהליך דגימת ICP-OES ומנוע הכללים — מסמך עבודה לצוות המעבדה</title>
+  <style>
+    :root {
+      --ink: #172a3a;
+      --muted: #596b79;
+      --paper: #f3f7f8;
+      --card: #ffffff;
+      --line: #d7e1e5;
+      --navy: #0f4c5c;
+      --navy-2: #176b7d;
+      --teal-soft: #e3f2f3;
+      --blue-soft: #e9f2fb;
+      --amber: #b46a00;
+      --amber-soft: #fff3dc;
+      --red: #a93232;
+      --red-soft: #fdeaea;
+      --green: #287351;
+      --green-soft: #e7f4ed;
+      --purple: #6351a3;
+      --purple-soft: #f0ecfb;
+      --shadow: 0 12px 34px rgba(20, 52, 63, .09);
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: Arial, "Noto Sans Hebrew", sans-serif;
+      line-height: 1.65;
+    }
+    a { color: var(--navy-2); }
+    code, .ltr { direction: ltr; unicode-bidi: isolate; font-family: Consolas, "Courier New", monospace; }
+    .page { max-width: 1220px; margin: 0 auto; padding: 30px 24px 72px; }
+    .hero {
+      color: white;
+      background: linear-gradient(135deg, #0d4150 0%, #176b7d 68%, #2b8091 100%);
+      border-radius: 24px;
+      padding: 42px 46px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::after {
+      content: "ICP";
+      position: absolute;
+      inset-inline-start: 28px;
+      bottom: -34px;
+      font-size: 140px;
+      font-weight: 700;
+      letter-spacing: -10px;
+      opacity: .07;
+      direction: ltr;
+    }
+    .eyebrow { font-size: 13px; letter-spacing: .05em; font-weight: 700; opacity: .86; }
+    h1 { font-size: clamp(30px, 4.5vw, 51px); line-height: 1.13; margin: 9px 0 14px; max-width: 900px; }
+    .hero p { font-size: 18px; max-width: 860px; margin: 0; opacity: .94; }
+    .meta-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 24px; }
+    .hero .pill { background: rgba(255,255,255,.14); border-color: rgba(255,255,255,.24); color: white; }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .pill.confirmed { background: var(--green-soft); color: var(--green); border-color: #bcdcca; }
+    .pill.working { background: var(--blue-soft); color: #225f91; border-color: #c4d9ed; }
+    .pill.decision { background: var(--amber-soft); color: var(--amber); border-color: #ebcf9c; }
+    .pill.stop { background: var(--red-soft); color: var(--red); border-color: #edc1c1; }
+
+    .toc {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      margin: 18px 0 24px;
+      background: rgba(255,255,255,.94);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 9px 12px;
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      box-shadow: 0 6px 18px rgba(20, 52, 63, .06);
+      backdrop-filter: blur(10px);
+    }
+    .toc a { text-decoration: none; color: var(--ink); padding: 6px 9px; border-radius: 8px; font-size: 13px; font-weight: 700; }
+    .toc a:hover { background: var(--teal-soft); color: var(--navy); }
+
+    section {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 28px 30px;
+      margin: 18px 0;
+      box-shadow: 0 8px 24px rgba(20, 52, 63, .045);
+      scroll-margin-top: 70px;
+    }
+    h2 { font-size: 27px; line-height: 1.25; margin: 0 0 13px; color: var(--navy); }
+    h3 { font-size: 19px; margin: 24px 0 8px; color: var(--ink); }
+    h4 { font-size: 16px; margin: 0 0 7px; }
+    p { margin: 8px 0 12px; }
+    ul, ol { padding-right: 22px; }
+    li { margin: 5px 0; }
+    .lead { font-size: 18px; color: #2d4654; max-width: 980px; }
+    .small { font-size: 13px; color: var(--muted); }
+
+    .callout {
+      border-right: 5px solid var(--navy-2);
+      background: var(--teal-soft);
+      padding: 15px 18px;
+      border-radius: 10px;
+      margin: 16px 0;
+    }
+    .callout.warning { border-right-color: var(--amber); background: var(--amber-soft); }
+    .callout.stop { border-right-color: var(--red); background: var(--red-soft); }
+    .callout.success { border-right-color: var(--green); background: var(--green-soft); }
+    .callout strong { color: var(--ink); }
+
+    .legend { display: flex; flex-wrap: wrap; gap: 8px 12px; margin: 16px 0; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    .mini-card { border: 1px solid var(--line); border-radius: 12px; padding: 15px 16px; background: #fbfdfd; }
+    .mini-card p { margin: 4px 0; }
+
+    .flow-wrap { margin: 22px 0 8px; }
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(145px, 1fr));
+      gap: 12px;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      counter-reset: flow;
+    }
+    .flow li { position: relative; min-height: 122px; margin: 0; }
+    .flow button {
+      width: 100%; height: 100%; text-align: right; direction: rtl;
+      border: 1px solid var(--line); border-radius: 14px; background: white;
+      color: var(--ink); padding: 14px; cursor: pointer; font: inherit;
+      transition: .16s ease; box-shadow: 0 5px 14px rgba(20,52,63,.045);
+    }
+    .flow button:hover, .flow button[aria-selected="true"] { border-color: var(--navy-2); background: var(--teal-soft); transform: translateY(-2px); }
+    .flow .num { width: 27px; height: 27px; display: inline-grid; place-items: center; background: var(--navy); color: white; border-radius: 50%; font-size: 12px; font-weight: 700; margin-left: 6px; }
+    .flow strong { display: block; margin-top: 8px; line-height: 1.25; }
+    .flow span.desc { display: block; color: var(--muted); font-size: 12px; margin-top: 5px; line-height: 1.35; }
+    .flow-detail { margin-top: 13px; border-right: 5px solid var(--navy-2); background: var(--teal-soft); border-radius: 11px; padding: 14px 17px; min-height: 76px; }
+    .flow-detail p { margin: 3px 0; }
+
+    .step-list { display: grid; gap: 12px; margin-top: 18px; }
+    .step {
+      display: grid;
+      grid-template-columns: 70px 1fr;
+      gap: 16px;
+      border-top: 1px solid var(--line);
+      padding-top: 16px;
+    }
+    .step:first-child { border-top: 0; padding-top: 0; }
+    .step-no { width: 58px; height: 58px; display: grid; place-items: center; border-radius: 16px; color: white; background: var(--navy); font-size: 21px; font-weight: 700; }
+    .step-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px; margin-top: 10px; }
+    .label { font-size: 11px; font-weight: 700; color: var(--navy-2); letter-spacing: .02em; }
+
+    .table-wrap { overflow-x: auto; margin: 14px 0 18px; }
+    table { width: 100%; border-collapse: collapse; min-width: 720px; }
+    th, td { border-bottom: 1px solid var(--line); padding: 10px 11px; text-align: right; vertical-align: top; }
+    th { background: #eef4f5; color: var(--navy); font-size: 13px; position: sticky; top: 48px; }
+    td { font-size: 13.5px; }
+    tr:hover td { background: #fafcfc; }
+    .id { direction: ltr; unicode-bidi: isolate; white-space: nowrap; font-family: Consolas, monospace; font-weight: 700; color: var(--navy-2); }
+    .num-cell { direction: ltr; unicode-bidi: isolate; white-space: nowrap; text-align: center; }
+    .status-cell { white-space: nowrap; }
+
+    details { border: 1px solid var(--line); border-radius: 12px; margin: 11px 0; background: #fff; }
+    summary { cursor: pointer; padding: 13px 15px; font-weight: 700; color: var(--navy); background: #f8fbfb; border-radius: 12px; }
+    details[open] summary { border-bottom: 1px solid var(--line); border-radius: 12px 12px 0 0; }
+    .details-body { padding: 6px 14px 14px; }
+
+    .logic {
+      direction: ltr;
+      text-align: left;
+      background: #122b35;
+      color: #e9f4f6;
+      border-radius: 12px;
+      padding: 16px 18px;
+      font-family: Consolas, monospace;
+      font-size: 13px;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      overflow-x: auto;
+    }
+
+    .sample-example { background: linear-gradient(180deg, #fbfdfd, #f2f8f9); border: 1px solid #cbdde1; border-radius: 14px; padding: 18px; }
+    .formula { direction: ltr; text-align: center; unicode-bidi: isolate; font: 700 18px Consolas, monospace; padding: 13px; background: white; border: 1px solid var(--line); border-radius: 10px; margin: 12px 0; }
+    .arrow { color: var(--navy-2); font-weight: 700; }
+
+    .decision-list { counter-reset: decision; padding: 0; list-style: none; }
+    .decision-list li { counter-increment: decision; border-bottom: 1px solid var(--line); padding: 13px 0; display: grid; grid-template-columns: 38px 1fr; gap: 10px; }
+    .decision-list li::before { content: counter(decision); width: 28px; height: 28px; display: grid; place-items: center; border-radius: 50%; background: var(--amber-soft); color: var(--amber); font-weight: 700; }
+
+    .footer-note { text-align: center; color: var(--muted); font-size: 12px; margin-top: 26px; }
+    .print-only { display: none; }
+
+    @media (max-width: 1000px) {
+      .flow { grid-template-columns: repeat(3, minmax(145px,1fr)); }
+      .grid-3, .step-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 720px) {
+      .page { padding: 12px 10px 45px; }
+      .hero { padding: 28px 22px; border-radius: 16px; }
+      section { padding: 21px 17px; }
+      .toc { position: static; }
+      .flow { grid-template-columns: 1fr 1fr; }
+      .grid-2, .grid-3, .step-grid { grid-template-columns: 1fr; }
+      .step { grid-template-columns: 52px 1fr; gap: 10px; }
+      .step-no { width: 46px; height: 46px; border-radius: 13px; font-size: 18px; }
+    }
+    @media print {
+      @page { size: A4; margin: 15mm; }
+      body { background: white; font-size: 10.5pt; }
+      .page { max-width: none; padding: 0; }
+      .hero { box-shadow: none; border-radius: 0; padding: 22px 24px; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+      .toc { display: none; }
+      section { box-shadow: none; break-inside: auto; margin: 12px 0; padding: 18px; }
+      h2, h3, summary { break-after: avoid; }
+      table, .mini-card, .sample-example, .callout, .step { break-inside: avoid; }
+      details { break-inside: auto; }
+      details > .details-body { display: block !important; }
+      .flow { grid-template-columns: repeat(3, 1fr); }
+      .flow button { transform: none !important; }
+      .print-only { display: block; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+  <header class="hero">
+    <div class="eyebrow">מסמך עבודה לצוות המעבדה · טיוטה לדיוק משותף</div>
+    <h1>מהדגימה הנמדדת ב־ICP-OES עד לתוצאה מאושרת</h1>
+    <p>המחשה תפעולית של תהליך קליטת קובץ המכשיר, בחירת עקום וקו, בקרת QA, טיפול בחזרות ואישור — ובצדה קטלוג ראשוני של כללי “מנוע הכללים”.</p>
+    <div class="meta-row">
+      <span class="pill">גרסה 0.2 · אוגוסט 2026</span>
+      <span class="pill">SPECTROGREEN / ICP Analyzer Pro</span>
+      <span class="pill">מבוסס SOP 05 ICP-OES</span>
+      <span class="pill">לא נוהל מבוקר</span>
+    </div>
+  </header>
+
+  <nav class="toc" aria-label="ניווט במסמך">
+    <a href="#purpose">מטרת המסמך</a>
+    <a href="#overview">התהליך במבט אחד</a>
+    <a href="#journey">מסלול הדגימה</a>
+    <a href="#engine">מנוע הכללים</a>
+    <a href="#rulebook">קטלוג כללים</a>
+    <a href="#workbench">שולחן המפעיל</a>
+    <a href="#qa">מודולי QA</a>
+    <a href="#data">נתונים ועקיבות</a>
+    <a href="#decisions">הכרעות נדרשות</a>
+  </nav>
+
+  <main>
+    <section id="purpose">
+      <h2>1. מהו המסמך — וכיצד נכון להשתמש בו</h2>
+      <p class="lead">זהו מסמך הבנה ודיוק לצוות המעבדה. הוא מתאר מה אמור לקרות לכל קריאה המגיעה מן ה־ICP, מה המערכת תחליט אוטומטית, מתי נדרשת החלטת מפעיל, ומה צריך להישמר כדי שמנהל התחום יוכל לשחזר כל תוצאה לאחור.</p>
+      <div class="callout">
+        <strong>גבול התהליך המתואר:</strong> נקודת הפתיחה היא מנת עבודה שכבר הוכנה למדידה והוכנסה ל־Sequence. נקודת הסיום היא תוצאה שנבחרה על ידי המפעיל ועברה לאישור מנהל התחום/המעבדה. קבלה, שימור והכנת הדגימה מוזכרים רק במקום שבו הנתונים שלהם משפיעים על התוצאה — למשל פקטור מיהול ומזהה מנת העבודה.
+      </div>
+      <div class="legend" aria-label="מקרא סטטוס">
+        <span class="pill confirmed">מעוגן ב־SOP</span>
+        <span class="pill working">החלטת עבודה שנמסרה</span>
+        <span class="pill decision">להכרעת צוות המעבדה</span>
+        <span class="pill stop">חסימה / NO-GO</span>
+      </div>
+      <div class="grid-3">
+        <div class="mini-card"><h4>לצוות המעבדה</h4><p>לקרוא לפי מסלול דגימה, לבדוק אם ההחלטות משקפות את העבודה בפועל, ולהשלים את הנקודות הפתוחות.</p></div>
+        <div class="mini-card"><h4>למנהל האיכות</h4><p>לוודא שכל חסימה, חריגה, שינוי ובחירה ניתנים לתיעוד, סקירה ושחזור.</p></div>
+        <div class="mini-card"><h4>לצוות הפיתוח — בהמשך</h4><p>לאחר אישור המעבדה, ניתן לתרגם את טבלאות הכללים לדרישות מערכת, מבנה נתונים ותרחישי קבלה.</p></div>
+      </div>
+    </section>
+
+    <section id="overview">
+      <h2>2. התהליך במבט אחד</h2>
+      <p>ברמת המכשיר נשמרות הגדרות מינימליות ב־Method וב־Sequence. שכבת העיבוד האוטומטית מתחילה כאשר קובץ ה־CSV נשמר בתיקייה קבועה.</p>
+      <div class="flow-wrap">
+        <ol class="flow" id="processFlow">
+          <li><button type="button" data-step="0" aria-selected="true"><span class="num">1</span><strong>Method + Sequence</strong><span class="desc">מדידה, סוגי רשומות, פקטור מיהול וריכוז סופי</span></button></li>
+          <li><button type="button" data-step="1" aria-selected="false"><span class="num">2</span><strong>CSV לתיקייה קבועה</strong><span class="desc">כל הקווים, העקומים, הבקרות והמטא־דאטה</span></button></li>
+          <li><button type="button" data-step="2" aria-selected="false"><span class="num">3</span><strong>קליטה ובדיקת שלמות</strong><span class="desc">שמירת מקור, מניעת כפילות וזיהוי הרצה</span></button></li>
+          <li><button type="button" data-step="3" aria-selected="false"><span class="num">4</span><strong>סיווג הרשומות</strong><span class="desc">דגימה, CAL, CCV, Blank, Spike, Duplicate ועוד</span></button></li>
+          <li><button type="button" data-step="4" aria-selected="false"><span class="num">5</span><strong>בחירת עקום וקו</strong><span class="desc">לפי הריכוז הנמדד, הטווח והעדיפות המאושרת</span></button></li>
+          <li><button type="button" data-step="5" aria-selected="false"><span class="num">6</span><strong>GO / NO-GO</strong><span class="desc">כיול, בקרות, Blank, IS, טווחים והפרעות</span></button></li>
+          <li><button type="button" data-step="6" aria-selected="false"><span class="num">7</span><strong>הפניה למודולי QA</strong><span class="desc">יציבות סטנדרטים, Spikes, Duplicates וטרנדים</span></button></li>
+          <li><button type="button" data-step="7" aria-selected="false"><span class="num">8</span><strong>שולחן מפעיל</strong><span class="desc">חריגים, כל החזרות ובחירת תוצאה מדווחת</span></button></li>
+          <li><button type="button" data-step="8" aria-selected="false"><span class="num">9</span><strong>אישור מנהל</strong><span class="desc">סקירה מקצועית עם שחזור מלא עד קובץ המקור</span></button></li>
+        </ol>
+        <div class="flow-detail" id="flowDetail" aria-live="polite">
+          <strong>Method + Sequence:</strong>
+          <p>תוכנת המכשיר מפיקה את כלל המדידות, מסווגת את סוגי הכוסות/הרשומות, שומרת “ריכוז”, פקטור מיהול ו“ריכוז סופי”, ומייצאת את כל המועמדים הדרושים לבחירה אוטומטית.</p>
+        </div>
+      </div>
+      <div class="callout success"><strong>עקרון יסוד:</strong> קובץ המקור נשמר ללא שינוי. כל תוצאה, כלל, בחירה ותיקון במערכת הם שכבה נוספת מעל המקור — לעולם לא דריסה שלו.</div>
+    </section>
+
+    <section id="journey">
+      <h2>3. מסלול של דגימה אחת</h2>
+      <p class="lead">המסלול הבא נועד לאפשר לצוות המעבדה לבחון את התהליך בשפה תפעולית: מה נכנס, מה מתבצע אוטומטית, ומה יוצא מכל שלב.</p>
+      <div class="step-list">
+        <div class="step">
+          <div class="step-no">01</div>
+          <div><h3>יצירת רשומה ב־Sequence</h3><p>מנת העבודה מקבלת מזהה חד־ערכי ומקושרת לדגימת המקור, לשיטת המדידה ולפקטור המיהול.</p><div class="step-grid"><div class="mini-card"><span class="label">קלט</span><p>Sample ID, Aliquot ID, Method Version, Dilution Factor.</p></div><div class="mini-card"><span class="label">אוטומציה</span><p>בדיקת שדות חובה והתאמת השיטה.</p></div><div class="mini-card"><span class="label">תוצר</span><p>רשומת Sample מוכנה להרצה.</p></div></div></div>
+        </div>
+        <div class="step">
+          <div class="step-no">02</div>
+          <div><h3>מדידה ויצירת כלל המועמדים</h3><p>המכשיר מודד את כל הקווים והמבטים המוגדרים בשיטה. לכל צירוף של יסוד × קו × מבט × עקום נשמרת קריאה נפרדת.</p><div class="callout warning"><strong>דרישת ממשק:</strong> אם הייצוא מכיל רק את הקו או העקום שכבר נבחרו בתוכנת המכשיר, מנוע הכללים אינו יכול לבחור באופן עצמאי. ה־CSV חייב להכיל את כל המועמדים ואת המטא־דאטה שלהם.</div></div>
+        </div>
+        <div class="step">
+          <div class="step-no">03</div>
+          <div><h3>חישוב ושמירת שני הריכוזים</h3><p>בתוכנת המכשיר נשמר הריכוז בתמיסה שנמדדה (“ריכוז”), פקטור המיהול, והריכוז לאחר תיקון למיהול (“ריכוז סופי”). שכבת העיבוד מחשבת מחדש ומוודאת התאמה.</p><div class="formula">Final concentration = Measured concentration × Dilution factor</div><p class="small">בחירת עקום וקו נעשית לפי <strong>הריכוז הנמדד לפני המיהול</strong>. הריכוז הסופי משמש לדיווח על דגימת המקור.</p></div>
+        </div>
+        <div class="step">
+          <div class="step-no">04</div>
+          <div><h3>קליטת ה־CSV וזיהוי ההרצה</h3><p>השירות המנטר את התיקייה קולט את הקובץ, מחשב מזהה/חתימה, שומר עותק מקור, מזהה Run ו־Sequence ומונע קליטה כפולה.</p><div class="step-grid"><div class="mini-card"><span class="label">GO</span><p>מבנה תקין, מזהים קיימים, שיטה מוכרת, קובץ חדש.</p></div><div class="mini-card"><span class="label">HOLD</span><p>שדה חסר שניתן להשלמה מבוקרת.</p></div><div class="mini-card"><span class="label">NO-GO</span><p>קובץ פגום, כפילות לא מוסברת או חוסר התאמה מהותי.</p></div></div></div>
+        </div>
+        <div class="step">
+          <div class="step-no">05</div>
+          <div><h3>סיווג כל שורה</h3><p>כל רשומה מסווגת כ־CAL, ICB, ICV, CCV, CCB, Method Blank, Rinse Blank, Sample, Spike/MS/MSD, Duplicate, SIC, LLOQ Check או LDR. הסיווג קובע לאיזה מסלול היא מועברת ואילו כללים יחולו עליה.</p></div>
+        </div>
+        <div class="step">
+          <div class="step-no">06</div>
+          <div><h3>בחירת עקום, קו ומבט</h3><p>עבור כל יסוד נבדקים תחום העקום, טווח הדיווח של הקו, Axial/Radial, תקפות הכיול, סטטוס QC ועדיפות שנקבעה בנתוני האב. אם נשאר מועמד יחיד — הוא מומלץ. אם נשארים כמה מועמדים ללא כלל עדיפות, או אף מועמד — התוצאה מועברת לטיפול.</p></div>
+        </div>
+        <div class="step">
+          <div class="step-no">07</div>
+          <div><h3>בדיקות GO / WARNING / NO-GO</h3><p>המערכת מקשרת את הדגימה למקטע ה־QC המתאים ובוחנת את הכיול, ICV/CCV, Blank, IS, חריגת תחום, הפרעות וזיכרון. הסטטוס נקבע ברמת היסוד והמקטע, אלא אם מדובר בכשל מערכתי.</p></div>
+        </div>
+        <div class="step">
+          <div class="step-no">08</div>
+          <div><h3>יצירת טבלת תוצאות והצגת כל החזרות</h3><p>לכל דגימה ויסוד מוצגות כל ההרצות והחזרות בלי דריסה. המערכת מסמנת תוצאה מומלצת, אך המפעיל רואה גם מועמדים אחרים, סטטוסים וסיבות.</p></div>
+        </div>
+        <div class="step">
+          <div class="step-no">09</div>
+          <div><h3>טיפול מפעיל ובחירת התוצאה המדווחת</h3><p>המפעיל מטפל בחריגים, מחליט על מדידה חוזרת או פסילה, ובוחר תוצאה אחת לכל Sample × Element. כל סטייה מהמלצת המערכת מחייבת סיבה ונרשמת בהיסטוריה.</p></div>
+        </div>
+        <div class="step">
+          <div class="step-no">10</div>
+          <div><h3>אישור מנהל התחום/המעבדה</h3><p>רק לאחר אישור סיום טיפול של המפעיל התוצאות עוברות למנהל. המנהל רואה את התוצאה הנבחרת, כל החזרות, העקום והקו, ה־QC, קובץ המקור והחלטות המשתמשים — ויכול לאשר, להחזיר לטיפול או לדחות.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="engine">
+      <h2>4. כיצד מנוע הכללים צריך לחשוב</h2>
+      <div class="callout"><strong>הסדר חשוב:</strong> אין לבחור קו לפני שנבדקה תקפות העקום המתאים, ואין לחשב תקפות תחום לפי הריכוז הסופי לאחר מיהול. כל בחירה חייבת להישען על גרסה מאושרת של טבלת הכללים.</div>
+      <h3>סדר ההרצה המומלץ</h3>
+      <ol>
+        <li>אימות הקובץ, שדות החובה והמזהים; שמירת המקור.</li>
+        <li>סיווג סוג הרשומה וקישור בין Sample, Spike, Duplicate ובקרות.</li>
+        <li>טעינת Method Version ו־Rule Set Version שהיו בתוקף בעת ההרצה.</li>
+        <li>בדיקת עקומי הכיול המועמדים: נקודות, טווח, R², Blank וסטטוס.</li>
+        <li>בדיקת כל קו/מבט מועמד מול טווח הדיווח והריכוז שנמדד לפני המיהול.</li>
+        <li>בדיקת QC ומקטע ההשפעה לכל יסוד.</li>
+        <li>בחירת המועמד בעל העדיפות הגבוהה ביותר מבין המועמדים התקינים.</li>
+        <li>חישוב חוזר של הריכוז הסופי והשוואתו לערך שיצא מן המכשיר.</li>
+        <li>ניתוב רשומות QA למודולים הייעודיים ויצירת סטטוס תוצאה.</li>
+        <li>איחוד כל ניסיונות המדידה של אותה דגימה לשולחן העבודה של המפעיל.</li>
+      </ol>
+
+      <h3>לוגיקה תמציתית לבחירת תוצאה</h3>
+      <div class="logic">FOR each Sample × Element × Run:
+  candidates = all exported Line × View × Curve results
+
+  valid_candidates = candidates WHERE
+      line/view is allowed by Method Version
+      AND measured_concentration is inside line report range
+      AND measured_concentration is inside curve range
+      AND calibration status = PASS
+      AND relevant QC segment status is not FAIL
+      AND required metadata is complete
+
+  IF valid_candidates = 0       → HOLD / re-dilute / remeasure / manual review
+  IF valid_candidates = 1       → AUTO-RECOMMEND that candidate
+  IF valid_candidates > 1       → apply approved priority table
+  IF priority still ties        → WARNING + operator decision
+
+  calculated_final = measured_concentration × dilution_factor
+  IF calculated_final ≠ exported_final beyond approved tolerance → FAIL import result
+
+  preserve every candidate; mark only one as System Recommended.</div>
+
+      <h3>דוגמה ממחישה — נתרן</h3>
+      <div class="sample-example">
+        <p><strong>דוגמה בלבד, לא כלל מאושר:</strong> בדגימה נמדד נתרן בריכוז <span class="ltr">72 mg/L</span> בתמיסה, ופקטור המיהול הוא <span class="ltr">5</span>. הריכוז הסופי הוא <span class="ltr">360 mg/L</span>.</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>קו</th><th>מבט לפי ה־SOP</th><th>טווח דיווח</th><th>האם 72 בתחום?</th><th>תוצאה</th></tr></thead>
+          <tbody>
+            <tr><td class="num-cell">589.592</td><td>Axial (ללא R)</td><td class="num-cell">1–5</td><td>לא</td><td><span class="pill stop">נפסל</span></td></tr>
+            <tr><td class="num-cell">588.995</td><td>Axial (ללא R)</td><td class="num-cell">1–5</td><td>לא</td><td><span class="pill stop">נפסל</span></td></tr>
+            <tr><td class="num-cell">589.592R</td><td>Radial</td><td class="num-cell">5–500</td><td>כן</td><td><span class="pill working">מועמד</span></td></tr>
+            <tr><td class="num-cell">330.298R</td><td>Radial</td><td class="num-cell">50–500</td><td>כן</td><td><span class="pill working">מועמד</span></td></tr>
+          </tbody>
+        </table></div>
+        <p>נותרו שני קווים תקינים. בלי טבלת עדיפות מאושרת, המערכת <strong>אינה רשאית לנחש</strong> איזה מהם עדיף; היא תסמן את התוצאה לטיפול מפעיל. הדוגמה גם ממחישה מדוע הבדיקה נעשית מול <span class="ltr">72 mg/L</span> ולא מול הריכוז הסופי <span class="ltr">360 mg/L</span>.</p>
+      </div>
+    </section>
+
+    <section id="rulebook">
+      <h2>5. קטלוג ראשוני של כללי מנוע הכללים</h2>
+      <p>הטבלאות הן “ספר חוקים” ראשוני. לפני פיתוח, כל שורה צריכה לקבל בעלים מקצועי, גרסה, תאריך תחילה, מקור מאושר ותוצאת בדיקת קבלה.</p>
+
+      <details open>
+        <summary>א. קליטה, שלמות וסיווג רשומות</summary>
+        <div class="details-body table-wrap"><table>
+          <thead><tr><th>מזהה</th><th>כלל</th><th>פעולת המערכת</th><th>מעמד</th></tr></thead>
+          <tbody>
+            <tr><td class="id">ING-001</td><td>קובץ מקור נשמר ללא שינוי ומקבל Hash/Export ID.</td><td>קליטה כפולה נדחית; עיבוד חוזר יוצר גרסה חדשה.</td><td><span class="pill working">החלטת עבודה</span></td></tr>
+            <tr><td class="id">ING-002</td><td>נדרשים Run ID, Sample/Aliquot ID, Method Version, Element, Line, View, Curve, ריכוז, מיהול, ריכוז סופי, יחידות, סוג רשומה וזמן.</td><td>שדה קריטי חסר → HOLD או דחיית הקובץ לפי חומרה.</td><td><span class="pill decision">לאשר רשימת חובה</span></td></tr>
+            <tr><td class="id">ING-003</td><td>יש לייצא את כל הקווים והעקומים המועמדים, לא רק את הנבחרים.</td><td>אם חסרים מועמדים — אין בחירה אוטומטית; מעבר לטיפול.</td><td><span class="pill working">החלטת עבודה</span></td></tr>
+            <tr><td class="id">CLS-001</td><td>סוג רשומה מזוהה לפי קוד מוסכם: CAL/ICV/CCV/Blank/Sample/Spike/Duplicate וכו'.</td><td>ניתוב למסלול התוצאה ולמודול QA המתאים.</td><td><span class="pill decision">נדרש מילון קודים</span></td></tr>
+            <tr><td class="id">CLS-002</td><td>Spike/Duplicate מקושרים במפורש לדגימת המקור.</td><td>אין לבצע התאמה לפי שם בלבד; קישור חסר → HOLD.</td><td><span class="pill working">החלטת עבודה</span></td></tr>
+          </tbody>
+        </table></div>
+      </details>
+
+      <details open>
+        <summary>ב. עקומי כיול ובחירת העקום המתאים לריכוז</summary>
+        <div class="details-body table-wrap"><table>
+          <thead><tr><th>מזהה</th><th>כלל</th><th>פעולת המערכת</th><th>מעמד</th></tr></thead>
+          <tbody>
+            <tr><td class="id">CAL-001</td><td>עקום כיול נמדד מדי יום עבודה אנליטי.</td><td>עקום מחוץ לתוקף הזמן אינו מועמד.</td><td><span class="pill confirmed">SOP §10.9</span></td></tr>
+            <tr><td class="id">CAL-002</td><td>לפחות 3 סטנדרטים כולל Blank; כל עקום כולל Blank.</td><td>עקום שאינו עומד בתנאי → FAIL.</td><td><span class="pill confirmed">SOP §10.9 / Table 1</span></td></tr>
+            <tr><td class="id">CAL-003</td><td><span class="ltr">R² &gt; 0.990</span> לעקום לינארי או מסדר שני.</td><td>ערך שאינו עומד בתנאי → FAIL לעקום.</td><td><span class="pill confirmed">SOP §10.9</span></td></tr>
+            <tr><td class="id">CAL-004</td><td>הסטנדרט הנמוך יהיה ברמת LLOQ או מתחתיה.</td><td>עקום שאינו מכסה את קצה הכימות → FAIL/בדיקה.</td><td><span class="pill confirmed">SOP §10.9</span></td></tr>
+            <tr><td class="id">CAL-005</td><td>בחירת עקום נעשית לפי הריכוז הנמדד לפני הכפלת פקטור המיהול.</td><td>נבחר רק עקום שטווחו מכיל את הריכוז בתמיסה.</td><td><span class="pill working">לוגיקה נדרשת</span></td></tr>
+            <tr><td class="id">CAL-006</td><td>כאשר קיימים כמה עקומים תקינים לאותו קו, מופעלת טבלת עדיפות לפי תחום ריכוז.</td><td>אין עדיפות או קיימת חפיפה לא פתורה → WARNING.</td><td><span class="pill decision">נדרשת טבלת Curve Priority</span></td></tr>
+            <tr><td class="id">CAL-007</td><td>הסרת נקודת כיול מותרת רק לפי כלל מאושר; נמסר שניתן להסיר נקודה שאינה קצה.</td><td>נשמרים העקום המקורי והעקום שנבחר, הנקודה שהוסרה, משתמש, זמן וסיבה.</td><td><span class="pill decision">לא מופיע ב־SOP הנוכחי</span></td></tr>
+            <tr><td class="id">CAL-008</td><td>כל תוצאה מקושרת ל־Calibration Snapshot: מזהה, משוואה, טווח, R², נקודות פעילות וסטטוס.</td><td>ה־Snapshot נשמר גם אם נתוני האב משתנים בעתיד.</td><td><span class="pill working">עקיבות</span></td></tr>
+          </tbody>
+        </table></div>
+      </details>
+
+      <details open>
+        <summary>ג. בחירת קו ספקטרלי ו־Axial/Radial</summary>
+        <div class="details-body table-wrap"><table>
+          <thead><tr><th>מזהה</th><th>כלל</th><th>פעולת המערכת</th><th>מעמד</th></tr></thead>
+          <tbody>
+            <tr><td class="id">LIN-001</td><td>רק קו ומבט המותרים בגרסת השיטה יכולים להיבחר.</td><td>מועמד שאינו מאושר נפסל ונרשמת סיבה.</td><td><span class="pill confirmed">SOP Table 1</span></td></tr>
+            <tr><td class="id">LIN-002</td><td>Axial/Radial הוא חלק בלתי נפרד מזהות הקריאה; R בטבלה מציין Radial.</td><td>אין לאחד תוצאות של אותו אורך גל במבטים שונים.</td><td><span class="pill confirmed">SOP Table 1</span></td></tr>
+            <tr><td class="id">LIN-003</td><td>הריכוז הנמדד חייב להימצא בטווח הדיווח של הקו.</td><td>מחוץ לטווח → הקו נפסל; אם אין חלופה → HOLD/מיהול חוזר.</td><td><span class="pill confirmed">SOP Table 1</span></td></tr>
+            <tr><td class="id">LIN-004</td><td>אם כמה קווים עומדים בכל התנאים, נבחר הקו בעל Priority הגבוה ביותר.</td><td>העדיפות נשמרת כנתון אב לפי Method × Element × Range.</td><td><span class="pill decision">נדרשת היררכיה</span></td></tr>
+            <tr><td class="id">LIN-005</td><td>אם כמה קווים תקינים נותנים תוצאות שונות מעבר לסף מוסכם.</td><td>WARNING/FAIL לפי הסף; נדרשת סקירה של ספקטרום/הפרעה.</td><td><span class="pill decision">נדרש סף השוואה</span></td></tr>
+            <tr><td class="id">LIN-006</td><td>קו חלופי יכול להיבחר עקב תחום, רוויה או הפרעה רק לפי סיבה מקודדת.</td><td>הבחירה והסיבה נשמרות; שינוי לאחר שמירה יוצר Revision.</td><td><span class="pill working">החלטת עבודה</span></td></tr>
+          </tbody>
+        </table></div>
+      </details>
+
+      <details open>
+        <summary>ד. ריכוז, מיהול, תחום ודיווח</summary>
+        <div class="details-body table-wrap"><table>
+          <thead><tr><th>מזהה</th><th>כלל</th><th>פעולת המערכת</th><th>מעמד</th></tr></thead>
+          <tbody>
+            <tr><td class="id">CON-001</td><td>נשמרים בנפרד “ריכוז”, Dilution Factor ו“ריכוז סופי”.</td><td>אין לדרוס את הריכוז שקדם למיהול.</td><td><span class="pill working">החלטת עבודה</span></td></tr>
+            <tr><td class="id">CON-002</td><td>המערכת מחשבת מחדש: ריכוז × פקטור מיהול.</td><td>אי־התאמה מעבר לסבילות מאושרת → FAIL/HOLD.</td><td><span class="pill decision">נדרשת סבילות</span></td></tr>
+            <tr><td class="id">CON-003</td><td>פקטור מיהול חייב להיות חיובי, מתועד ומקושר למנת עבודה/הרצה.</td><td>פקטור חסר או בלתי סביר → HOLD.</td><td><span class="pill working">עקיבות</span></td></tr>
+            <tr><td class="id">CON-004</td><td>תוצאה מעל תחום העקום/הקו אינה משתחררת אוטומטית.</td><td>נפתחת משימת מיהול ומדידה חוזרת.</td><td><span class="pill confirmed">SOP §9.3, §12</span></td></tr>
+            <tr><td class="id">CON-005</td><td>הדיווח מוגבל לעד שתי ספרות משמעותיות.</td><td>העיגול מתבצע בשכבת הדיווח; הערך המלא נשמר.</td><td><span class="pill confirmed">SOP §12.1</span></td></tr>
+            <tr><td class="id">CON-006</td><td>תוצאה מתחת ל־LLOQ/שלילית מטופלת לפי כלל דיווח מאושר.</td><td>אין להמציא אפס; נשמר הערך ונוצר Reported Qualifier מתאים.</td><td><span class="pill decision">כלל דיווח חסר</span></td></tr>
+          </tbody>
+        </table></div>
+      </details>
+
+      <details open>
+        <summary>ה. GO / NO-GO לכיול, בקרות ומקטע ההרצה</summary>
+        <div class="details-body table-wrap"><table>
+          <thead><tr><th>מזהה</th><th>כלל</th><th>פעולת המערכת</th><th>מעמד</th></tr></thead>
+          <tbody>
+            <tr><td class="id">QC-001</td><td>ICV בטווח ±10% מן הערך האמיתי וממקור נפרד מסטנדרטי הכיול.</td><td>כשל → הכיול אינו מאומת.</td><td><span class="pill confirmed">SOP §9.6</span></td></tr>
+            <tr><td class="id">QC-002</td><td>CCV בטווח ±10% מן הערך האמיתי.</td><td>כשל → NO-GO לאותו יסוד; קביעת טווח ההשפעה.</td><td><span class="pill confirmed">SOP §9.8</span></td></tr>
+            <tr><td class="id">QC-003</td><td>CCV ו־CCB נבדקים לאחר כל 10 דגימות ובסוף ההרצה.</td><td>המערכת יוצרת QC Segment ומקשרת את הדגימות שבין שתי נקודות אימות.</td><td><span class="pill confirmed">SOP §9.8</span></td></tr>
+            <tr><td class="id">QC-004</td><td>Blank תקין אם האנליט מתחת לגבול שנקבע לסוג ה־Blank.</td><td>כשל מחזיק את היסוד והמקטע המושפעים.</td><td><span class="pill decision">ב־SOP: ½ LLOQ וגם LLOQ</span></td></tr>
+            <tr><td class="id">QC-005</td><td>אם אימות הכיול נכשל: מפסיקים, מאתרים סיבה, מכיילים מחדש ומודדים מחדש מאז ה־CCV התקין האחרון.</td><td>יצירת NO-GO ורשימת Impact אוטומטית.</td><td><span class="pill confirmed">SOP §9.8</span></td></tr>
+            <tr><td class="id">QC-006</td><td>Recovery של ה־Internal Standard בטווח 70–130%.</td><td>מחוץ לטווח → מדידה חוזרת או בדיקת עקום; HOLD לתוצאה.</td><td><span class="pill confirmed">SOP §9.10</span></td></tr>
+            <tr><td class="id">QC-007</td><td>לפחות 3 ממוצעי Integration לכל סטנדרט ודגימה.</td><td>מספר קטן יותר → כשל שלמות/Method.</td><td><span class="pill confirmed">SOP §11.3</span></td></tr>
+            <tr><td class="id">QC-008</td><td>הרצה הכוללת “ארבע בקרות ו־Blank” והתרת כשל יחיד לאלמנט נמסרה ככלל עבודה.</td><td>אין לתכנת עד ליישוב מול כלל ה־SOP המחמיר.</td><td><span class="pill decision">סתירה מהותית</span></td></tr>
+            <tr><td class="id">QC-009</td><td>תדירות ICV אחרי כל 10 דגימות אינה עקבית בין סעיפי ה־SOP והנספח.</td><td>הכלל נשאר פרמטר כבוי/אזהרה עד להכרעה.</td><td><span class="pill decision">נדרש תיקון SOP</span></td></tr>
+            <tr><td class="id">QC-010</td><td>Method Blank נכלל בכל אצוות דגימות ועובר את כלל ההכנה המלא.</td><td>הרשומה מקושרת ל־Preparation Batch ולכל הדגימות שעליהן היא מגינה.</td><td><span class="pill confirmed">SOP §9.2</span></td></tr>
+            <tr><td class="id">QC-011</td><td>שטיפה ב־Rinse Blank במשך 60 שניות לפחות בין כל סטנדרט ודגימה.</td><td>אימות הגדרת ה־Method/Sequence; חריגה נשמרת כאירוע שיטה.</td><td><span class="pill confirmed">SOP §4.4, §11.3</span></td></tr>
+          </tbody>
+        </table></div>
+      </details>
+
+      <details open>
+        <summary>ו. הפרעות, זיכרון ובדיקות תקופתיות</summary>
+        <div class="details-body table-wrap"><table>
+          <thead><tr><th>מזהה</th><th>כלל</th><th>פעולת המערכת</th><th>מעמד</th></tr></thead>
+          <tbody>
+            <tr><td class="id">INT-001</td><td>אחרי דגימה מעל 500 mg/L Na/Ca/Mg או מעל 200 mg/L K, הדגימות הבאות נמדדות מחדש בגלל Memory Effect.</td><td>סימון Carryover Risk ויצירת משימת מדידה חוזרת לטווח שיוגדר.</td><td><span class="pill confirmed">SOP §12.2</span></td></tr>
+            <tr><td class="id">INT-002</td><td>K ניתן לדיווח ללא מיהול עד 1000 mg/L Na; מעל לכך נדרש מיהול.</td><td>חריגה → HOLD ל־K ומשימת מיהול.</td><td><span class="pill confirmed">SOP §12.3.1</span></td></tr>
+            <tr><td class="id">INT-003</td><td>Sr ניתן לדיווח ללא מיהול עד 500 mg/L Ca; מעל לכך נדרש מיהול.</td><td>חריגה → HOLD ל־Sr ומשימת מיהול.</td><td><span class="pill confirmed">SOP §12.3.2</span></td></tr>
+            <tr><td class="id">INT-004</td><td>SIC נבדק אחת לרבעון; כל האנליטים מתחת למחצית LLOQ.</td><td>שמירה במודול QA והתראה על אי־עמידה.</td><td><span class="pill confirmed">SOP §9.9</span></td></tr>
+            <tr><td class="id">PER-001</td><td>LDR ל־Ca/Na/Mg/K מאומת כל 6 חודשים; Recovery ±10%.</td><td>פג תוקף → חסימת שיטה/Warning לפי החלטת איכות.</td><td><span class="pill confirmed">SOP §9.3</span></td></tr>
+            <tr><td class="id">PER-002</td><td>LLOQ מאומת רבעונית; Mean Recovery ±20% ו־RSD &lt;10%.</td><td>שמירה במודול QA; פג תוקף או כשל → פעולה לפי נוהל.</td><td><span class="pill confirmed">SOP §9.5</span></td></tr>
+          </tbody>
+        </table></div>
+      </details>
+
+      <details open>
+        <summary>ז. Spike, Duplicate, חזרות ובחירת תוצאה</summary>
+        <div class="details-body table-wrap"><table>
+          <thead><tr><th>מזהה</th><th>כלל</th><th>פעולת המערכת</th><th>מעמד</th></tr></thead>
+          <tbody>
+            <tr><td class="id">QA-001</td><td>Recovery של MS/MSD בטווח 75–125%.</td><td>חישוב אוטומטי, GO/NO-GO והעברה למודול Spike QA.</td><td><span class="pill confirmed">SOP §9.4.1</span></td></tr>
+            <tr><td class="id">QA-002</td><td>RPD של Duplicate או MS/MSD ≤20%.</td><td>חישוב אוטומטי, GO/NO-GO והעברה למודול Duplicate QA; נוסחת החישוב המדויקת תאושר בנתוני האב.</td><td><span class="pill confirmed">SOP §9.4</span></td></tr>
+            <tr><td class="id">QA-003</td><td>כל ICV/CCV/Standard נשמר גם כרשומת QA לאורך זמן.</td><td>הערך, Recovery, לוט, קו, מבט, עקום, מכשיר ותאריך נשלחים לסדרת זמן.</td><td><span class="pill working">דרישת עבודה</span></td></tr>
+            <tr><td class="id">QA-004</td><td>בפרויקט חדש, ופעם בשנה בפרויקט קיים, נכלל MS+Duplicate כאשר צפויים אנליטים, או MS/MSD כאשר אינם צפויים.</td><td>בדיקת תדירות, סוג הזוג וקישור לדגימת המקור; Spike ברמה שבין הסטנדרט הנמוך לאמצעי.</td><td><span class="pill confirmed">SOP §9.4.1</span></td></tr>
+            <tr><td class="id">REP-001</td><td>כל ההרצות והחזרות של אותה דגימה נשמרות ומוצגות יחד.</td><td>אין דריסה; לכל ניסיון מזהה וסטטוס נפרדים.</td><td><span class="pill working">דרישת עבודה</span></td></tr>
+            <tr><td class="id">REP-002</td><td>לכל Sample × Element קיימת תוצאה נבחרת אחת בלבד בכל גרסה.</td><td>בחירה חדשה מבטלת לוגית את הקודמת ויוצרת Revision.</td><td><span class="pill working">דרישת עבודה</span></td></tr>
+            <tr><td class="id">REP-003</td><td>המערכת ממליצה על ניסיון PASS; המפעיל רשאי לבחור ניסיון אחר לפי הרשאה.</td><td>בחירה שונה מההמלצה מחייבת סיבה; כללים לבחירת WARNING/FAIL דורשים הכרעה.</td><td><span class="pill decision">מדיניות Override</span></td></tr>
+            <tr><td class="id">APP-001</td><td>תוצאה עוברת למנהל רק לאחר סיום טיפול ואישור מפעיל.</td><td>רשומה חסרה/פתוחה נשארת בתור המפעיל.</td><td><span class="pill working">דרישת עבודה</span></td></tr>
+            <tr><td class="id">APP-002</td><td>כל שינוי ערך, קו, עקום, מיהול, סטטוס או בחירה נשמר ב־Audit Trail.</td><td>מי, מתי, ערך קודם/חדש, סיבה ומסמכים תומכים.</td><td><span class="pill working">ניהול איכות</span></td></tr>
+          </tbody>
+        </table></div>
+      </details>
+    </section>
+
+    <section id="workbench">
+      <h2>6. שולחן העבודה של מפעיל ה־ICP</h2>
+      <p>ברירת המחדל היא ניהול לפי חריגים: תוצאות תקינות מוצגות באופן רגוע; WARNING ו־FAIL בולטים ומחייבים טיפול. כל הניסיונות עבור אותה דגימה ויסוד נשארים גלויים.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>דגימה</th><th>יסוד</th><th>ניסיון</th><th>ריכוז</th><th>מיהול</th><th>ריכוז סופי</th><th>קו / מבט</th><th>עקום</th><th>QA</th><th>מצב בחירה</th></tr></thead>
+        <tbody>
+          <tr><td class="ltr">S-1042</td><td>Na</td><td>Run 18 / #1</td><td class="num-cell">72</td><td class="num-cell">×5</td><td class="num-cell">360</td><td class="num-cell">589.592R</td><td>High-Na v4</td><td><span class="pill confirmed">PASS</span></td><td><span class="pill working">מומלץ</span></td></tr>
+          <tr><td class="ltr">S-1042</td><td>Na</td><td>Run 18 / #1</td><td class="num-cell">71</td><td class="num-cell">×5</td><td class="num-cell">355</td><td class="num-cell">330.298R</td><td>High-Na v4</td><td><span class="pill decision">WARNING: שני קווים</span></td><td>מועמד חלופי</td></tr>
+          <tr><td class="ltr">S-1042</td><td>Na</td><td>Run 19 / #2</td><td class="num-cell">74</td><td class="num-cell">×5</td><td class="num-cell">370</td><td class="num-cell">589.592R</td><td>High-Na v5</td><td><span class="pill stop">FAIL: CCV</span></td><td>לא ניתן לבחור</td></tr>
+        </tbody>
+      </table></div>
+      <p class="small">הערכים בדוגמה נועדו להמחשה בלבד. בשולחן האמיתי כל שורה נפתחת לפירוט: ספקטרום/קריאות מועמדות, עקום, QC, קובץ מקור, סיבת סטטוס והיסטוריה.</p>
+      <div class="grid-3">
+        <div class="mini-card"><h4>PASS</h4><p>ניתן לבחור. אם זו המלצת המערכת, אין צורך בנימוק נוסף.</p></div>
+        <div class="mini-card"><h4>WARNING</h4><p>ניתן לבחור רק לפי הרשאה ובצירוף סיבה; נשאר גלוי למנהל.</p></div>
+        <div class="mini-card"><h4>FAIL</h4><p>ברירת המחדל: לא ניתן לבחור לדיווח. חריגה מן הכלל דורשת מנגנון Deviation מאושר — אם המעבדה תחליט לאפשרו.</p></div>
+      </div>
+    </section>
+
+    <section id="qa">
+      <h2>7. מודולי QA הנפרדים מן הטיפול בתוצאה הבודדת</h2>
+      <p>אותה קריאה יכולה להשפיע מיידית על GO/NO-GO של הרצה וגם להישמר למעקב מגמות ארוך טווח. שני השימושים חייבים להיות מקושרים אך אינם זהים.</p>
+      <div class="grid-2">
+        <div class="mini-card"><h4>יציבות סטנדרטים ובקרות</h4><p>ICV, CCV וסטנדרטים: ערך צפוי, ערך נמדד, Recovery, לוט, תוקף, מכשיר, קו, מבט, עקום, מפעיל ותאריך. המודול יציג מגמות ושינויי Bias לאורך זמן.</p></div>
+        <div class="mini-card"><h4>Spikes / MS / MSD</h4><p>קישור לדגימת המקור, ריכוז לפני ואחרי Spike, כמות Spike, Recovery, סטטוס והיסטוריה לפי מטריצה/פרויקט/יסוד.</p></div>
+        <div class="mini-card"><h4>Duplicates</h4><p>זוג הרשומות, RPD, תחום ריכוז, תוצאת הכלל, סוג Duplicate והצטברות ביצועים לאורך זמן.</p></div>
+        <div class="mini-card"><h4>בדיקות תקופתיות</h4><p>LLOQ, LDR ו־SIC עם תאריך תוקף, תוצאה, שיטה, אישור ותזכורת לפני פקיעה.</p></div>
+      </div>
+      <div class="callout warning"><strong>הבחנה חשובה:</strong> חריגה ממגמת QA אינה פוסלת אוטומטית תוצאות עבר או הווה, אלא אם קיים כלל מאושר המגדיר את הסף, טווח ההשפעה והפעולה. מודול המגמות מציף ראיה; מנוע ה־GO/NO-GO אוכף רק כללים מאושרים.</div>
+    </section>
+
+    <section id="data">
+      <h2>8. הנתונים שיש לשמור כדי לאפשר עקיבות מלאה</h2>
+      <div class="grid-2">
+        <div>
+          <h3>שלוש שכבות נתונים</h3>
+          <ol>
+            <li><strong>מקור:</strong> קובץ CSV המקורי, ללא שינוי, עם מזהה וחתימה.</li>
+            <li><strong>נגזר:</strong> חישובים, סיווג, קישור ל־QC, מועמדים, סטטוסים והמלצת מנוע הכללים.</li>
+            <li><strong>החלטה:</strong> בחירת המפעיל, נימוק, אישורי מנהל, תיקון ו־Audit Trail.</li>
+          </ol>
+        </div>
+        <div class="callout"><strong>מבחן העקיבות:</strong> ממספר התוצאה בדוח צריך להיות אפשר להגיע בלחיצה או בחיפוש אל הדגימה, ההכנה והמיהול, כל ההרצות, הקו והמבט שנבחרו, העקום המדויק, ה־QC הרלוונטי, קובץ המקור וכל החלטת משתמש.</div>
+      </div>
+
+      <h3>מבנה מינימלי של שורת מדידה ב־CSV</h3>
+      <div class="table-wrap"><table>
+        <thead><tr><th>משפחה</th><th>שדות נדרשים</th><th>מדוע נדרש</th></tr></thead>
+        <tbody>
+          <tr><td>קובץ והרצה</td><td class="ltr">ExportFileID, RunID, SequenceID, ExportTime, InstrumentID, SoftwareVersion</td><td>זיהוי חד־ערכי ומניעת כפילות.</td></tr>
+          <tr><td>שיטה ומשתמש</td><td class="ltr">MethodID, MethodVersion, RuleSetVersion, OperatorID</td><td>שחזור ההגדרות והאחריות.</td></tr>
+          <tr><td>זהות הרשומה</td><td class="ltr">RecordType, SampleID, AliquotID, ParentSampleID, Position, MeasurementTime</td><td>סיווג וקישור Spike/Duplicate/Control.</td></tr>
+          <tr><td>המועמד האנליטי</td><td class="ltr">Element, Wavelength, View, CandidateID, Replicate/Integration count</td><td>בחירה בין כל הקווים והמבטים.</td></tr>
+          <tr><td>כיול</td><td class="ltr">CalibrationID, CurveID, CurveType, RangeMin, RangeMax, Equation, R2, Included/Excluded points, CurveStatus</td><td>בחירת העקום ושחזורו.</td></tr>
+          <tr><td>תוצאה</td><td class="ltr">MeasuredConcentration, DilutionFactor, FinalConcentration, Unit</td><td>חישוב, אימות ועקיבות המיהול.</td></tr>
+          <tr><td>QC</td><td class="ltr">ExpectedValue, Recovery, BlankLimit, ISRecovery, QCStatus, QCSegmentID</td><td>GO/NO-GO וטווח השפעה.</td></tr>
+          <tr><td>קשרי QA</td><td class="ltr">StandardLot, ExpiryDate, SpikeAmount, DuplicatePairID</td><td>מעקב מגמות וניתוח תקופתי.</td></tr>
+        </tbody>
+      </table></div>
+      <div class="callout warning"><strong>נקודת בדיקה מול הייצוא בפועל:</strong> שמות השדות הם לוגיים, לא בהכרח שמות העמודות בתוכנת SPECTRO. יש לבצע Mapping מול קובץ CSV אמיתי ולוודא שהמידע אכן קיים. שדה שלא ניתן לייצא צריך להגיע ממקור מאומת אחר או להישאר חסם לפיתוח.</div>
+    </section>
+
+    <section id="sopmatrix">
+      <h2>9. טבלת הקווים וטווחי הדיווח מתוך SOP 05</h2>
+      <p>הטבלה הבאה היא בסיס לטבלת נתוני האב של מנוע הבחירה. הסימון R מציין Radial; קו ללא R מוצג כ־Axial בהתאם להערת ה־SOP. יש לאשר שהטבלה היא הגרסה המבוקרת והפעילה במעבדה.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>יסוד</th><th>LLOQ mg/L</th><th>קו / מבט</th><th>טווח דיווח mg/L</th></tr></thead>
+        <tbody>
+          <tr><td>Na</td><td class="num-cell">1</td><td class="ltr">589.592 A; 588.995 A; 589.592 R; 330.298 R</td><td class="ltr">1–5; 1–5; 5–500; 50–500</td></tr>
+          <tr><td>K</td><td class="num-cell">0.5</td><td class="ltr">766.491 A; 769.896 A; 766.491 R; 769.896 R</td><td class="ltr">0.5–5; 0.5–5; 5–500; 5–500</td></tr>
+          <tr><td>Mg</td><td class="num-cell">0.1</td><td class="ltr">285.213 A; 279.079 A; 279.079 R; 285.213 R</td><td class="ltr">0.1–50; 0.1–50; 50–500; 50–500</td></tr>
+          <tr><td>Ca</td><td class="num-cell">0.5</td><td class="ltr">393.366 A; 396.847 A; 317.933 A; 422.673 A</td><td class="ltr">0.5–1; 0.5–5; 1–500; 10–200</td></tr>
+          <tr><td>Al</td><td class="num-cell">0.05</td><td class="ltr">167.078 A; 396.152 A</td><td class="ltr">0.05–1; 0.05–10</td></tr>
+          <tr><td>As</td><td class="num-cell">0.05</td><td class="ltr">189.042 A; 193.759 A</td><td class="ltr">0.05–5; 0.05–10</td></tr>
+          <tr><td>B</td><td class="num-cell">0.05</td><td class="ltr">249.773 A; 249.677 A; 182.641 A</td><td class="ltr">0.05–10; 0.05–10; 0.05–5</td></tr>
+          <tr><td>Ba</td><td class="num-cell">0.01</td><td class="ltr">233.527 A; 455.404 A</td><td class="ltr">0.01–10; 0.01–10</td></tr>
+          <tr><td>Be</td><td class="num-cell">0.01</td><td class="ltr">234.861 A; 313.042 A; 313.107 A</td><td class="ltr">0.01–10; 0.01–1; 0.01–10</td></tr>
+          <tr><td>Cd</td><td class="num-cell">0.01</td><td class="ltr">214.438 A; 226.502 A</td><td class="ltr">0.01–1; 0.01–10</td></tr>
+          <tr><td>Cr</td><td class="num-cell">0.05</td><td class="ltr">267.716 A; 283.563 A</td><td class="ltr">0.05–5; 1–10</td></tr>
+          <tr><td>Co</td><td class="num-cell">0.01</td><td class="ltr">228.616 A; 238.892 A</td><td class="ltr">0.01–10; 0.01–5</td></tr>
+          <tr><td>Cu</td><td class="num-cell">0.05</td><td class="ltr">324.754 A; 224.700 A; 327.396 A</td><td class="ltr">0.05–10; 0.05–1; 0.05–1</td></tr>
+          <tr><td>Fe</td><td class="num-cell">0.05</td><td class="ltr">238.204 A; 259.941 A</td><td class="ltr">0.05–1; 0.05–10</td></tr>
+          <tr><td>Li</td><td class="num-cell">0.01</td><td class="ltr">670.780 R; 670.780 A</td><td class="ltr">0.01–10; 0.01–10</td></tr>
+          <tr><td>Mn</td><td class="num-cell">0.05</td><td class="ltr">257.611 A; 259.373 A</td><td class="ltr">0.05–10; 0.05–5</td></tr>
+          <tr><td>Ni</td><td class="num-cell">0.05</td><td class="ltr">221.648 A; 231.604 A; 232.003 A</td><td class="ltr">0.5–1; 0.5–10; 0.5–10</td></tr>
+          <tr><td>Pb</td><td class="num-cell">0.05</td><td class="ltr">213.857 A; 283.305 A</td><td class="ltr">0.05–1; 0.5–10</td></tr>
+          <tr><td>Se</td><td class="num-cell">0.05</td><td class="ltr">196.090 A; 204.050 A</td><td class="ltr">0.05–5; 0.5–10</td></tr>
+          <tr><td>Sr</td><td class="num-cell">0.05</td><td class="ltr">407.771 A; 421.552 A</td><td class="ltr">0.05–1; 0.5–10</td></tr>
+          <tr><td>Zn</td><td class="num-cell">0.05</td><td class="ltr">213.856 A; 206.200 A</td><td class="ltr">0.05–5; 0.05–10</td></tr>
+        </tbody>
+      </table></div>
+      <div class="callout warning"><strong>פער היקף:</strong> סעיף Scope של ה־SOP מונה קבוצה מצומצמת יותר של יסודות, בעוד Table 1 כוללת יסודות נוספים. יש לקבוע אילו יסודות כלולים בהיקף המוסמך והפעיל של השיטה לפני טעינת נתוני האב.</div>
+    </section>
+
+    <section id="decisions">
+      <h2>10. נקודות הכרעה לצוות המעבדה לפני מעבר לפיתוח</h2>
+      <p class="lead">אלו אינן “שאלות טכניות” בלבד. כל אחת משנה את תוצאת מנוע הכללים ולכן צריכה לקבל החלטה מקצועית מתועדת.</p>
+      <ol class="decision-list">
+        <li><div><strong>מבנה הבקרות בפועל:</strong> האם לאחר כל 10 דגימות נמדדים CCV+CCB בלבד, גם ICV, או ארבע בקרות בריכוזים שונים ו־Blank? האם מותר כשל יחיד לאלמנט?</div></li>
+        <li><div><strong>גבולות Blank:</strong> מהו הגבול המחייב לכל סוג — ICB, CCB, Method Blank ו־Rinse Blank — מחצית LLOQ או LLOQ?</div></li>
+        <li><div><strong>טבלת עדיפות קווים:</strong> לכל Method × Element × Range: הקו הראשי, קווים חלופיים, Axial/Radial, סיבת מעבר וסף השוואה בין קווים.</div></li>
+        <li><div><strong>טבלת בחירת עקומים:</strong> שמות העקומים, תחומי השימוש, חפיפות, סדר עדיפות, והאם/מתי מותר להסיר נקודת כיול שאינה נקודת קצה.</div></li>
+        <li><div><strong>התנהגות ב־WARNING וב־FAIL:</strong> מה המפעיל רשאי לבחור, מתי נדרש אישור חריגה, ומתי אין אפשרות לדווח כלל.</div></li>
+        <li><div><strong>דיווח מתחת ל־LLOQ:</strong> Qualifier, מספר הספרות, טיפול בערך שלילי, יחידות וכלל העיגול. הערך הגולמי צריך להישמר גם אם מוצג טקסט בדוח.</div></li>
+        <li><div><strong>סבילות חישוב:</strong> מהי הסטייה המותרת בין “ריכוז × מיהול” לבין “ריכוז סופי” שיוצא מן המכשיר, בהתחשב בעיגול.</div></li>
+        <li><div><strong>טווח השפעת Memory Effect:</strong> כמה דגימות עוקבות יש לסמן/למדוד מחדש לאחר דגימה בריכוז גבוה.</div></li>
+        <li><div><strong>כללי מגמה במודול QA:</strong> אילו התראות סטטיסטיות יוצגו ומתי מגמה הופכת לפעולה מחייבת.</div></li>
+        <li><div><strong>היקף היסודות:</strong> יישור בין סעיף ה־Scope לבין Table 1 ובין ההיקף המוסמך לעבודת המעבדה בפועל.</div></li>
+        <li><div><strong>שדות הייצוא:</strong> אימות מול CSV אמיתי שכל הקווים, העקומים, שני הריכוזים, המיהול, סוגי הרשומות, המזהים והמשתמש אכן קיימים.</div></li>
+        <li><div><strong>גרסאות והרשאות:</strong> מי רשאי לשנות Rule Set, מי מאשר גרסה חדשה, מי רשאי לבצע Override, ומהי הפרדת התפקידים בין מפעיל למאשר.</div></li>
+      </ol>
+    </section>
+
+    <section id="handoff">
+      <h2>11. מתי המסמך יהיה בשל למסירה לצוות הפיתוח</h2>
+      <div class="grid-2">
+        <div>
+          <h3>תנאי סף</h3>
+          <ul>
+            <li>כל נקודות ההכרעה בפרק 10 נסגרו ואושרו.</li>
+            <li>קיים CSV אמיתי מייצג הכולל הרצה תקינה, כשל, Spike, Duplicate וחזרה.</li>
+            <li>טבלאות קווים, עקומים, בקרות וגבולות הוסבו לנתוני אב בעלי גרסה.</li>
+            <li>הוגדרו סטטוסים, הרשאות, סיבות Override ושרשרת האישור.</li>
+            <li>נבדקה התאמה בין כלל מנוע לבין סעיף SOP או החלטה מבוקרת.</li>
+          </ul>
+        </div>
+        <div>
+          <h3>תוצרי המסירה הבאים</h3>
+          <ul>
+            <li>מפרט שדות CSV ו־Mapping לעמודות בפועל.</li>
+            <li>טבלת Rules machine-readable עם מזהה, תנאי, פעולה וגרסה.</li>
+            <li>מודל נתונים וקשרים בין Sample, Run, Candidate, Curve, QC ו־Decision.</li>
+            <li>תרחישי קבלה: PASS, WARNING, FAIL, חזרה, Override, תיקון ואישור.</li>
+            <li>Wireframes למסך המפעיל, מודולי QA ומסך אישור המנהל.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout success"><strong>המלצת יישום:</strong> לאחר סגירת הכללים, להפעיל תחילה את המנוע במצב Shadow — הוא מחשב ומסמן אך אינו חוסם. רק לאחר השוואה מתועדת להחלטות ידניות עוברים לאכיפת GO/NO-GO.</div>
+    </section>
+
+    <section id="sources">
+      <h2>12. מקורות ומעמד המסמך</h2>
+      <ul>
+        <li><span class="ltr">SOP 05 — Inductively Coupled Plasma–Optical Emission Spectrometry, based on EPA Method 6010D</span>, כפי שנמסר לפרויקט.</li>
+        <li>מסמך האפיון הקודם: “תהליך העבודה בדגימות ICP וממשק העבודה עם מערכת LIMS”, גרסה 0.1.</li>
+        <li>החלטות והבהרות שנמסרו בדיון עם צוות המעבדה עד אוגוסט 2026.</li>
+      </ul>
+      <div class="callout warning"><strong>מעמד:</strong> זהו מסמך עבודה להמחשה ולדיוק, לא SOP ולא מפרט פיתוח מאושר. במקרה של סתירה, אין לתכנת את הכלל לפני הכרעה ועדכון מקור מבוקר.</div>
+    </section>
+  </main>
+
+  <div class="footer-note">טיוטת עבודה · ICP-OES Rule Engine · גרסה 0.2 · אוגוסט 2026</div>
+</div>
+
+<script>
+  (function () {
+    const details = [
+      ["Method + Sequence", "תוכנת המכשיר מפיקה את כלל המדידות, מסווגת את סוגי הכוסות/הרשומות, שומרת “ריכוז”, פקטור מיהול ו“ריכוז סופי”, ומייצאת את כל המועמדים הדרושים לבחירה אוטומטית."],
+      ["CSV לתיקייה קבועה", "הייצוא חייב לכלול את כל הקווים, המבטים והעקומים המועמדים, ולא רק תוצאה שכבר נבחרה. הקובץ נכתב לנתיב מנוטר ומועבר לעיבוד בלי הקלדה ידנית."],
+      ["קליטה ובדיקת שלמות", "המערכת שומרת את המקור ללא שינוי, מונעת כפילות, מאמתת שדות חובה וקושרת את הקובץ להרצה, לשיטה ולמפעיל."],
+      ["סיווג הרשומות", "כל שורה מזוהה כדגימה, סטנדרט כיול, ICV, CCV, Blank, Spike, Duplicate או בדיקה תקופתית — ומנותבת לכללים ולמודול QA הנכונים."],
+      ["בחירת עקום וקו", "הבחירה מתבצעת לפי הריכוז שנמדד לפני מיהול, טווח העקום, טווח הקו, Axial/Radial, תקפות QC וטבלת עדיפויות מאושרת."],
+      ["GO / NO-GO", "המערכת קובעת PASS, WARNING או FAIL ברמת היסוד ומקטע ההרצה, ומציגה במפורש אילו דגימות מושפעות מכל כשל."],
+      ["הפניה למודולי QA", "קריאות ICV/CCV/Standards, Spikes, Duplicates, LLOQ, LDR ו־SIC נשמרות גם לניתוח מגמות ארוך טווח."],
+      ["שולחן מפעיל", "כל החזרות מוצגות יחד. המערכת ממליצה על תוצאה, והמפעיל מטפל בחריגים ובוחר תוצאה מדווחת אחת תוך תיעוד מלא."],
+      ["אישור מנהל", "המנהל מקבל רק תוצאות שסיימו טיפול, עם אפשרות להתחקות לקובץ המקור, ההרצה, העקום, הקו, ה־QC וכל החלטות המשתמשים."]
+    ];
+    const root = document.getElementById("processFlow");
+    const output = document.getElementById("flowDetail");
+    if (!root || !output) return;
+    root.addEventListener("click", function (event) {
+      const button = event.target.closest("button[data-step]");
+      if (!button) return;
+      root.querySelectorAll("button[data-step]").forEach(function (item) {
+        item.setAttribute("aria-selected", item === button ? "true" : "false");
+      });
+      const item = details[Number(button.dataset.step)];
+      if (!item) return;
+      output.innerHTML = "<strong>" + item[0] + ":</strong><p>" + item[1] + "</p>";
+    });
+  }());
+</script>
+</body>
+</html>
